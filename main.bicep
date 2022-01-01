@@ -24,7 +24,7 @@ param tags object = {
 
 module rg '/Modules/Man'
 
-module resourceGroupsDeployment '/Modules/Management/resourcegroups.bicep' = if (deployResoucegroups){
+module resourceGroupsDeployment 'Modules/Management/resourcegroups.bicep' = if (deployResoucegroups){
   name: 'resourceGroupDeployment'
   params: {
     location: location
