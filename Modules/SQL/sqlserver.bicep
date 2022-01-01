@@ -20,6 +20,15 @@ resource sqlServer 'Microsoft.Sql/servers@2019-06-01-preview' = {
   }
 }
 
+resource publicAccess 'Microsoft.Sql/servers/firewallRules@2021-05-01-preview' = {
+  name: 'public'
+  parent: sqlServer
+  properties: {
+    endIpAddress: '0.0.0.0'
+    startIpAddress: '255.255.255.255'
+  }
+}
+
 resource alerts 'Microsoft.Sql/servers/securityAlertPolicies@2017-03-01-preview' = if (enableADS) {
   parent: sqlServer
   name: 'Default'
