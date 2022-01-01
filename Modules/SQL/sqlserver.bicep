@@ -5,7 +5,6 @@ param administratorLoginPassword string
 param location string
 param serverName string
 param enableADS bool = false
-param allowAzureIps bool = true
 param tags object
 
 //Deployment
@@ -24,8 +23,8 @@ resource publicAccess 'Microsoft.Sql/servers/firewallRules@2021-05-01-preview' =
   name: 'public'
   parent: sqlServer
   properties: {
-    endIpAddress: '0.0.0.0'
-    startIpAddress: '255.255.255.255'
+    startIpAddress: '0.0.0.0'
+    endIpAddress: '255.255.255.255'
   }
 }
 
