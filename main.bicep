@@ -1,5 +1,6 @@
 //resources to deploy
 param deployResoucegroups bool = true
+param deploySqlServer bool = true
 
 // generic parameters
 targetScope = 'subscription'
@@ -22,6 +23,14 @@ param tags object = {
   'utcdatedeployed': basetime
 }
 
+//sql server parameters
+//parameters sql server
+var sqlServerRg = resourceGroup(resourceGroupNames[1].name)
+param sqlServerName string = 'sql-apps-prod-westeu-055'
+param localAdminUsername string = 'azadmin'
+@secure()
+param localAdminPassword string
+
 module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = if (deployResoucegroups){
   name: 'resourceGroupDeployment'
   params: {
@@ -29,4 +38,19 @@ module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = if
     resourceGroupNames: resourceGroupNames
     tags: tags
   } 
+}
+
+module sqlServer './Modules/sql/sqlserver.bicep' = if (deploySqlServer) {
+  name: 'sqlServer'
+  scope: sqlServerRg
+  params: {
+    tags: tags
+    location: location
+    administratorLogin: localAdminUsername
+    administratorLoginPassword: localAdminPassword
+    serverName: sqlServerName
+  }
+  dependsOn: [
+    resourceGroupsDeployment
+  ]
 }
