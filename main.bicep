@@ -22,7 +22,7 @@ param tags object = {
   'utcdatedeployed': basetime
 }
 
-module resourceGroupsDeployment '.\\Modules\\Management\\resourcegroup.bicep' = if (deployResoucegroups){
+module resourceGroupsDeployment './Modules/Management/resourcegroup.bicep' = if (deployResoucegroups){
   name: 'resourceGroupDeployment'
   params: {
     location: location
