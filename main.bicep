@@ -40,7 +40,7 @@ module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = if
   } 
 }
 
-module sqlServer './Modules/sql/sqlserver.bicep' = if (deploySqlServer) {
+module sqlServer './Modules/SQL/sqlserver.bicep' = if (deploySqlServer) {
   name: 'sqlServer'
   scope: sqlServerRg
   params: {
