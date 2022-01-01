@@ -26,7 +26,7 @@ param tags object = {
 //sql server parameters
 //parameters sql server
 var sqlServerRg = resourceGroup(resourceGroupNames[1].name)
-param sqlServerName string = 'sql-apps-prod-westeu-055'
+param sqlServerName string = 'sql-stocktracker-prod-westeu-001'
 param localAdminUsername string = 'azadmin'
 @secure()
 param localAdminPassword string

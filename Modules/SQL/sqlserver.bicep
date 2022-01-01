@@ -24,7 +24,6 @@ resource allowAzureResources 'Microsoft.Sql/servers/firewallRules@2014-04-01-pre
   parent: sqlServer
   name: 'AllowAllWindowsAzureIps'
   location: location
-  tags: tags
   properties: {
     endIpAddress: '0.0.0.0'
     startIpAddress: '0.0.0.0'
