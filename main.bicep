@@ -22,8 +22,6 @@ param tags object = {
   'utcdatedeployed': basetime
 }
 
-module rg '/Modules/Man'
-
 module resourceGroupsDeployment './resourcegroups.bicep' = if (deployResoucegroups){
   name: 'resourceGroupDeployment'
   params: {
