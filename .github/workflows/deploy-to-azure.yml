@@ -21,5 +21,4 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         region: westeurope
         template: ./main.bicep
-        deploymentmode: Complete
         deploymentname: Stocktracker
