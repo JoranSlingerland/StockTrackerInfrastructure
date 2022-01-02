@@ -1,6 +1,7 @@
 //resources to deploy
 param deployResoucegroups bool = true
 param deploySqlServer bool = true
+param deploySqlDatabases bool = true
 
 // generic parameters
 targetScope = 'subscription'
@@ -23,13 +24,21 @@ param tags object = {
   'utcdatedeployed': basetime
 }
 
-//sql server parameters
 //parameters sql server
 var sqlServerRg = resourceGroup(resourceGroupNames[1].name)
 param sqlServerName string = 'sql-stocktracker-prod-westeu-001'
 param localAdminUsername string = 'azadmin'
 @secure()
 param localAdminPassword string
+
+//parameters database
+var sqlDatabaseRg = resourceGroup(resourceGroupNames[1].name)
+param sqlDatabases array = [
+  {
+    name: 'sqldb-stocktracker-prod-westeu-001'
+    dtu: 10
+  }
+]
 
 module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = if (deployResoucegroups){
   name: 'resourceGroupDeployment'
@@ -51,6 +60,21 @@ module sqlServer './Modules/SQL/sqlserver.bicep' = if (deploySqlServer) {
     serverName: sqlServerName
   }
   dependsOn: [
+    resourceGroupsDeployment
+  ]
+}
+
+module sqlDatabase './Modules/SQL/sqldatabase.bicep' = if (deploySqlDatabases){
+  name: 'sqlDatabase'
+  scope: sqlDatabaseRg
+  params: {
+    tags: tags
+    location: location
+    sqlServerName: sqlServerName
+    sqlDatabases: sqlDatabases
+  }
+  dependsOn: [
+    sqlServer
     resourceGroupsDeployment
   ]
 }
