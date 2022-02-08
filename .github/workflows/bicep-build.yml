@@ -1,6 +1,7 @@
 on:
   push:
     paths:
+      - "*"
       - "!build"
 name: Bicep-Build
 
