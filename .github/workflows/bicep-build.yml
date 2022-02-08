@@ -16,7 +16,7 @@ jobs:
       uses: Azure/bicep-build-action@v1.0.0
       with:
         bicepFilePath: main.bicep
-        outputFilePath: azuredeploy.json
+        outputFilePath: buid\azuredeploy.json
     
     - name: Push to git
       run: |
