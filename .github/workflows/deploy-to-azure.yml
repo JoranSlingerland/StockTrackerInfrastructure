@@ -1,4 +1,7 @@
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - "build"
 name: Deploy to Azure
 jobs:
   build-and-deploy:
