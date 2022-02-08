@@ -1,0 +1,455 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1124.51302",
+      "templateHash": "2441641761132060535"
+    }
+  },
+  "parameters": {
+    "deployResoucegroups": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "deploySqlServer": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "deploySqlDatabases": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "westeurope"
+    },
+    "resourceGroupNames": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "rg-mgmt-prod-westeu-001",
+          "lockResourceGroup": false
+        },
+        {
+          "name": "rg-sql-prod-westeu-001",
+          "lockResourceGroup": false
+        }
+      ]
+    },
+    "basetime": {
+      "type": "string",
+      "defaultValue": "[utcNow('u')]"
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {
+        "env": "prod",
+        "utcdatedeployed": "[parameters('basetime')]"
+      }
+    },
+    "sqlServerName": {
+      "type": "string",
+      "defaultValue": "sql-stocktracker-prod-westeu-001"
+    },
+    "localAdminUsername": {
+      "type": "string",
+      "defaultValue": "azadmin"
+    },
+    "localAdminPassword": {
+      "type": "secureString"
+    },
+    "sqlDatabases": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "sqldb-stocktracker-prod-westeu-001",
+          "dtu": 10
+        }
+      ]
+    }
+  },
+  "variables": {
+    "sqlServerRg": "[createObject()]",
+    "sqlDatabaseRg": "[createObject()]"
+  },
+  "resources": [
+    {
+      "condition": "[parameters('deployResoucegroups')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "resourceGroupDeployment",
+      "location": "[deployment().location]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "resourceGroupNames": {
+            "value": "[parameters('resourceGroupNames')]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "12826968293049709235"
+            }
+          },
+          "parameters": {
+            "resourceGroupNames": {
+              "type": "array"
+            },
+            "location": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "copy": {
+                "name": "resourceGroupDeployment",
+                "count": "[length(parameters('resourceGroupNames'))]",
+                "mode": "serial",
+                "batchSize": 2
+              },
+              "type": "Microsoft.Resources/resourceGroups",
+              "apiVersion": "2021-04-01",
+              "name": "[parameters('resourceGroupNames')[copyIndex()].name]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {}
+            },
+            {
+              "condition": "[parameters('resourceGroupNames')[copyIndex()].lockResourceGroup]",
+              "copy": {
+                "name": "deployRgLock",
+                "count": "[length(parameters('resourceGroupNames'))]"
+              },
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2020-10-01",
+              "name": "lockDeployment",
+              "resourceGroup": "[parameters('resourceGroupNames')[copyIndex()].name]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.4.1124.51302",
+                      "templateHash": "16311202089600072691"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/locks",
+                      "apiVersion": "2016-09-01",
+                      "name": "rgLock",
+                      "properties": {
+                        "level": "CanNotDelete",
+                        "notes": "Resource group and its resources should not be deleted."
+                      }
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('resourceGroupNames')[copyIndex()].name)]"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "condition": "[parameters('deploySqlServer')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "sqlServer",
+      "resourceGroup": "[parameters('resourceGroupNames')[1].name]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "tags": {
+            "value": "[parameters('tags')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "administratorLogin": {
+            "value": "[parameters('localAdminUsername')]"
+          },
+          "administratorLoginPassword": {
+            "value": "[parameters('localAdminPassword')]"
+          },
+          "serverName": {
+            "value": "[parameters('sqlServerName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "17386466328542061374"
+            }
+          },
+          "parameters": {
+            "administratorLogin": {
+              "type": "string"
+            },
+            "administratorLoginPassword": {
+              "type": "secureString"
+            },
+            "location": {
+              "type": "string"
+            },
+            "serverName": {
+              "type": "string"
+            },
+            "enableADS": {
+              "type": "bool",
+              "defaultValue": false
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Sql/servers",
+              "apiVersion": "2019-06-01-preview",
+              "name": "[parameters('serverName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "version": "12.0"
+              }
+            },
+            {
+              "type": "Microsoft.Sql/servers/firewallRules",
+              "apiVersion": "2021-05-01-preview",
+              "name": "[format('{0}/{1}', parameters('serverName'), 'public')]",
+              "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "255.255.255.255"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+              ]
+            },
+            {
+              "condition": "[parameters('enableADS')]",
+              "type": "Microsoft.Sql/servers/securityAlertPolicies",
+              "apiVersion": "2017-03-01-preview",
+              "name": "[format('{0}/{1}', parameters('serverName'), 'Default')]",
+              "properties": {
+                "state": "Enabled",
+                "emailAccountAdmins": true
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'resourceGroupDeployment')]"
+      ]
+    },
+    {
+      "condition": "[parameters('deploySqlDatabases')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "sqlDatabase",
+      "resourceGroup": "[parameters('resourceGroupNames')[1].name]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "tags": {
+            "value": "[parameters('tags')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "sqlServerName": {
+            "value": "[parameters('sqlServerName')]"
+          },
+          "sqlDatabases": {
+            "value": "[parameters('sqlDatabases')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1124.51302",
+              "templateHash": "8560072151225209280"
+            }
+          },
+          "parameters": {
+            "sqlServerName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "sqlDatabases": {
+              "type": "array"
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "copy": {
+                "name": "sqlDatabase",
+                "count": "[length(parameters('sqlDatabases'))]",
+                "mode": "serial",
+                "batchSize": 2
+              },
+              "type": "Microsoft.Sql/servers/databases",
+              "apiVersion": "2021-02-01-preview",
+              "name": "[format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name)]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "sku": {
+                "name": "Standard",
+                "tier": "Standard",
+                "capacity": "[parameters('sqlDatabases')[copyIndex()].dtu]"
+              },
+              "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "maxSizeBytes": 268435456000,
+                "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+                "zoneRedundant": false,
+                "readScale": "Disabled",
+                "requestedBackupStorageRedundancy": "Geo",
+                "maintenanceConfigurationId": "/subscriptions/6632c3ab-c4fa-4d1e-956e-66bd7e515d44/providers/Microsoft.Maintenance/publicMaintenanceConfigurations/SQL_Default",
+                "isLedgerOn": false
+              }
+            },
+            {
+              "copy": {
+                "name": "auditingPolicy",
+                "count": "[length(parameters('sqlDatabases'))]"
+              },
+              "type": "Microsoft.Sql/servers/databases/auditingPolicies",
+              "apiVersion": "2014-04-01",
+              "name": "[format('{0}/{1}/{2}', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1], 'Default')]",
+              "properties": {
+                "auditingState": "Disabled"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers/databases', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1])]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "longTermRetention",
+                "count": "[length(parameters('sqlDatabases'))]"
+              },
+              "type": "Microsoft.Sql/servers/databases/backupLongTermRetentionPolicies",
+              "apiVersion": "2017-03-01-preview",
+              "name": "[format('{0}/{1}/{2}', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1], 'Default')]",
+              "properties": {
+                "weeklyRetention": "PT0S",
+                "monthlyRetention": "PT0S",
+                "yearlyRetention": "PT0S",
+                "weekOfYear": 1
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers/databases/auditingPolicies', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1], 'Default')]",
+                "[resourceId('Microsoft.Sql/servers/databases', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1])]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "shortTermRetention",
+                "count": "[length(parameters('sqlDatabases'))]"
+              },
+              "type": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies",
+              "apiVersion": "2017-10-01-preview",
+              "name": "[format('{0}/{1}/{2}', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1], 'Default')]",
+              "properties": {
+                "retentionDays": 7
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers/databases/backupLongTermRetentionPolicies', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1], 'Default')]",
+                "[resourceId('Microsoft.Sql/servers/databases', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1])]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "geoBackupPolicy",
+                "count": "[length(parameters('sqlDatabases'))]"
+              },
+              "type": "Microsoft.Sql/servers/databases/geoBackupPolicies",
+              "apiVersion": "2014-04-01",
+              "name": "[format('{0}/{1}/{2}', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1], 'Default')]",
+              "properties": {
+                "state": "Enabled"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1], 'Default')]",
+                "[resourceId('Microsoft.Sql/servers/databases', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1])]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "encryption",
+                "count": "[length(parameters('sqlDatabases'))]"
+              },
+              "type": "Microsoft.Sql/servers/databases/transparentDataEncryption",
+              "apiVersion": "2014-04-01",
+              "name": "[format('{0}/{1}/{2}', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1], 'current')]",
+              "properties": {
+                "status": "Enabled"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers/databases/geoBackupPolicies', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1], 'Default')]",
+                "[resourceId('Microsoft.Sql/servers/databases', split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[0], split(format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabases')[copyIndex()].Name), '/')[1])]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'resourceGroupDeployment')]",
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[1].name), 'Microsoft.Resources/deployments', 'sqlServer')]"
+      ]
+    }
+  ]
+}
