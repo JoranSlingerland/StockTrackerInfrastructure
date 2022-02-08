@@ -1,4 +1,7 @@
-on: [push]
+on:
+  push:
+    paths:
+      - "!build"
 name: Bicep-Build
 
 jobs:
@@ -15,8 +18,10 @@ jobs:
         bicepFilePath: main.bicep
         outputFilePath: azuredeploy.json
     
-    - name: upload json file
-      uses: actions/upload-artifact@v2
-      with:
-        name: azuredeploy.json
-        path: azuredeploy.json
+    - name: Push to git
+      run: |
+            git add .
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git commit -am "Azure deploy file"
+            git push
