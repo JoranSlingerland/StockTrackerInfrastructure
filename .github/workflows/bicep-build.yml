@@ -1,0 +1,16 @@
+on: [push]
+name: Bicep-Build
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+      # Checkout code
+    - uses: actions/checkout@main
+    
+    - name: Bicep Build
+      uses: Azure/bicep-build-action@v1.0.0
+      with:
+        bicepFilePath: main.bicep
+        outputFilePath: azuredeploy.json
