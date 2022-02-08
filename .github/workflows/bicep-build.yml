@@ -1,8 +1,7 @@
 on:
   push:
-    paths:
-      - "*"
-      - "!build"
+    paths-ignore:
+      - "build"
 name: Bicep-Build
 
 jobs:
