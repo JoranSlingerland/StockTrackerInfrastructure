@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.4.1124.51302",
-      "templateHash": "2441641761132060535"
+      "version": "0.4.1272.37030",
+      "templateHash": "5270219122786558635"
     }
   },
   "parameters": {
@@ -18,6 +18,10 @@
       "defaultValue": true
     },
     "deploySqlDatabases": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "deployKv": {
       "type": "bool",
       "defaultValue": true
     },
@@ -60,6 +64,19 @@
     "localAdminPassword": {
       "type": "secureString"
     },
+    "kvName": {
+      "type": "string",
+      "defaultValue": "kv-stocktracker-prod-westeu-001"
+    },
+    "server": {
+      "type": "secureString"
+    },
+    "database": {
+      "type": "secureString"
+    },
+    "api_key": {
+      "type": "secureString"
+    },
     "sqlDatabases": {
       "type": "array",
       "defaultValue": [
@@ -72,6 +89,7 @@
   },
   "variables": {
     "sqlServerRg": "[createObject()]",
+    "kvRg": "[createObject()]",
     "sqlDatabaseRg": "[createObject()]"
   },
   "resources": [
@@ -103,8 +121,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1124.51302",
-              "templateHash": "12826968293049709235"
+              "version": "0.4.1272.37030",
+              "templateHash": "11690585253532459689"
             }
           },
           "parameters": {
@@ -154,8 +172,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.4.1124.51302",
-                      "templateHash": "16311202089600072691"
+                      "version": "0.4.1272.37030",
+                      "templateHash": "17098131161041977861"
                     }
                   },
                   "resources": [
@@ -213,8 +231,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1124.51302",
-              "templateHash": "17386466328542061374"
+              "version": "0.4.1272.37030",
+              "templateHash": "10664986597911412535"
             }
           },
           "parameters": {
@@ -314,8 +332,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.1124.51302",
-              "templateHash": "8560072151225209280"
+              "version": "0.4.1272.37030",
+              "templateHash": "5286837130215169723"
             }
           },
           "parameters": {
@@ -450,6 +468,161 @@
         "[subscriptionResourceId('Microsoft.Resources/deployments', 'resourceGroupDeployment')]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[1].name), 'Microsoft.Resources/deployments', 'sqlServer')]"
       ]
+    },
+    {
+      "condition": "[parameters('deployKv')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "kv",
+      "resourceGroup": "[parameters('resourceGroupNames')[0].name]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "tags": {
+            "value": "[parameters('tags')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "api_key": {
+            "value": "[parameters('api_key')]"
+          },
+          "server": {
+            "value": "[parameters('server')]"
+          },
+          "database": {
+            "value": "[parameters('database')]"
+          },
+          "password": {
+            "value": "[parameters('localAdminPassword')]"
+          },
+          "user": {
+            "value": "[parameters('localAdminUsername')]"
+          },
+          "kvName": {
+            "value": "[parameters('kvName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "7440232252642934930"
+            }
+          },
+          "parameters": {
+            "kvName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "object"
+            },
+            "server": {
+              "type": "secureString"
+            },
+            "database": {
+              "type": "secureString"
+            },
+            "user": {
+              "type": "secureString"
+            },
+            "password": {
+              "type": "secureString"
+            },
+            "api_key": {
+              "type": "secureString"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults",
+              "apiVersion": "2021-10-01",
+              "name": "[parameters('kvName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "sku": {
+                  "family": "A",
+                  "name": "standard"
+                },
+                "tenantId": "[subscription().tenantId]",
+                "enabledForDeployment": true,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": true
+              }
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2021-10-01",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'server')]",
+              "properties": {
+                "contentType": "text/plain",
+                "value": "[parameters('server')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2021-10-01",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'database')]",
+              "properties": {
+                "contentType": "text/plain",
+                "value": "[parameters('database')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2021-10-01",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'user')]",
+              "properties": {
+                "contentType": "text/plain",
+                "value": "[parameters('user')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2021-10-01",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'password')]",
+              "properties": {
+                "contentType": "text/plain",
+                "value": "[parameters('password')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2021-10-01",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'api_key')]",
+              "properties": {
+                "contentType": "text/plain",
+                "value": "[parameters('api_key')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
+              ]
+            }
+          ]
+        }
+      }
     }
   ]
 }
