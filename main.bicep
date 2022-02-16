@@ -2,6 +2,7 @@
 param deployResoucegroups bool = true
 param deploySqlServer bool = true
 param deploySqlDatabases bool = true
+param deployKv bool = true
 
 // generic parameters
 targetScope = 'subscription'
@@ -30,6 +31,17 @@ param sqlServerName string = 'sql-stocktracker-prod-westeu-001'
 param localAdminUsername string = 'azadmin'
 @secure()
 param localAdminPassword string
+
+//paramters keyvault
+var kvRg = resourceGroup(resourceGroupNames[0].name)
+param kvName string = 'kv-stocktracker-prod-westeu-001'
+@secure()
+param server string
+@secure()
+param database string
+@secure()
+param api_key string
+
 
 //parameters database
 var sqlDatabaseRg = resourceGroup(resourceGroupNames[1].name)
@@ -77,4 +89,19 @@ module sqlDatabase './Modules/SQL/sqldatabase.bicep' = if (deploySqlDatabases){
     sqlServer
     resourceGroupsDeployment
   ]
+}
+
+module kv 'Modules/Management/kv.bicep' = if (deployKv){
+  name: 'kv'
+  scope: kvRg
+  params: {
+    tags: tags
+    location: location
+    api_key: api_key
+    server: server
+    database: database
+    password: localAdminPassword
+    user: localAdminUsername
+    kvName: kvName
+  }
 }
