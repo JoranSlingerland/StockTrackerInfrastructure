@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "5270219122786558635"
+      "templateHash": "15065467366759555464"
     }
   },
   "parameters": {
@@ -50,7 +50,8 @@
       "type": "object",
       "defaultValue": {
         "env": "prod",
-        "utcdatedeployed": "[parameters('basetime')]"
+        "utcdatedeployed": "[parameters('basetime')]",
+        "project": "Stocktracker"
       }
     },
     "sqlServerName": {
@@ -66,7 +67,9 @@
     },
     "kvName": {
       "type": "string",
-      "defaultValue": "kv-stocktracker-prod-westeu-001"
+      "defaultValue": "kv-sttr-prod-westeu-001",
+      "maxLength": 24,
+      "minLength": 3
     },
     "server": {
       "type": "secureString"
