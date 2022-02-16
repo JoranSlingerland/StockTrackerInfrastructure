@@ -35,9 +35,7 @@ param localAdminPassword string
 
 //paramters keyvault
 var kvRg = resourceGroup(resourceGroupNames[0].name)
-@minLength(3)
-@maxLength(24)
-param kvName string = 'kv-sttr-prod-westeu-001'
+param kvNamePrefix string = 'kv-'
 @secure()
 param server string
 @secure()
@@ -105,6 +103,6 @@ module kv 'Modules/Management/kv.bicep' = if (deployKv){
     database: database
     password: localAdminPassword
     user: localAdminUsername
-    kvName: kvName
+    kvNamePrefix: kvNamePrefix
   }
 }
