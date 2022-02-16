@@ -43,7 +43,6 @@ resource kv 'Microsoft.KeyVault/vaults@2021-10-01' = {
     enabledForDeployment: true
     enabledForDiskEncryption: false
     enabledForTemplateDeployment: true
-    enableSoftDelete: false
     enablePurgeProtection: false
   }
 }
