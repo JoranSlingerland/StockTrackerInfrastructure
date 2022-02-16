@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "4075635696311265457"
+      "templateHash": "15247668066560274582"
     }
   },
   "parameters": {
@@ -514,7 +514,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "10298268815094089422"
+              "templateHash": "15054745488760881521"
             }
           },
           "parameters": {
@@ -562,8 +562,7 @@
                 "accessPolicies": [],
                 "enabledForDeployment": true,
                 "enabledForDiskEncryption": false,
-                "enabledForTemplateDeployment": true,
-                "enablePurgeProtection": false
+                "enabledForTemplateDeployment": true
               }
             },
             {
