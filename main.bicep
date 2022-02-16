@@ -23,6 +23,7 @@ param basetime string = utcNow('u')
 param tags object = {
   'env': 'prod'
   'utcdatedeployed': basetime
+  'project': 'Stocktracker'
 }
 
 //parameters sql server
@@ -34,7 +35,9 @@ param localAdminPassword string
 
 //paramters keyvault
 var kvRg = resourceGroup(resourceGroupNames[0].name)
-param kvName string = 'kv-stocktracker-prod-westeu-001'
+@minLength(3)
+@maxLength(24)
+param kvName string = 'kv-sttr-prod-westeu-001'
 @secure()
 param server string
 @secure()
