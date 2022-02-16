@@ -65,6 +65,22 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
           name: 'server'
           value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/server)'
         }
+        {
+          name: 'database'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/database)'
+        }
+        {
+          name: 'user'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/user)'
+        }
+        {
+          name: 'password'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/password)'
+        }
+        {
+          name: 'api_key'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/apikey)'
+        }
       ]
       numberOfWorkers: 1
       linuxFxVersion: 'Python|3.9'
