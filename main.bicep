@@ -46,6 +46,10 @@ param apiKey string
 var stRg = resourceGroup(resourceGroupNames[2].name)
 var stNamePrefix = 'st'
 
+//Paramters Function
+var functionRg = resourceGroup(resourceGroupNames[2].name)
+var appServicePlanNamePrefix = 'plan-'
+var functionNamePrefix = 'func-'
 
 //parameters database
 var sqlDatabaseRg = resourceGroup(resourceGroupNames[1].name)
@@ -113,15 +117,27 @@ module kv 'Modules/Management/kv.bicep' = {
   ]
 }
 
-module st 'Modules/storage/storageaccount.bicep' = {
-  name: 'st'
-  scope: stRg
+// module st 'Modules/storage/storageaccount.bicep' = {
+//   name: 'st'
+//   scope: stRg
+//   params: {
+//     tags: tags
+//     location: location
+//     stNamePrefix: stNamePrefix
+//   }
+//   dependsOn: [
+//     resourceGroupsDeployment
+//   ]
+// }
+
+module function 'Modules/functions/function.bicep' = {
+  name: 'function'
+  scope: functionRg
   params: {
     tags: tags
     location: location
     stNamePrefix: stNamePrefix
+    appServicePlanNamePrefix: appServicePlanNamePrefix
+    functionNamePrefix: functionNamePrefix
   }
-  dependsOn: [
-    resourceGroupsDeployment
-  ]
 }
