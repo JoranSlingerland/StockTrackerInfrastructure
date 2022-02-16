@@ -105,4 +105,7 @@ module kv 'Modules/Management/kv.bicep' = if (deployKv){
     user: localAdminUsername
     kvNamePrefix: kvNamePrefix
   }
+  dependsOn: [
+    resourceGroupsDeployment
+  ]
 }

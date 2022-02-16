@@ -25,4 +25,4 @@ jobs:
         region: westeurope
         template: ./main.bicep
         deploymentname: Stocktracker
-        parameters: localAdminPassword=${{ secrets.SQLPASSWORD }} server=${{ secrets.SERVER}} database=${{ secrets.DATABASE}} api_key=${{ secrets.API_KEY}}
+        parameters: localAdminPassword=${{ secrets.SQLPASSWORD }} server=${{ secrets.SERVER}} database=${{ secrets.DATABASE}} api_key=test
