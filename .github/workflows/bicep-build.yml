@@ -2,6 +2,7 @@ on:
   push:
     paths-ignore:
       - "build"
+      - ".github"
 name: Bicep-Build
 
 jobs:
