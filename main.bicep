@@ -34,8 +34,6 @@ param localAdminPassword string
 //paramters keyvault
 var kvRg = resourceGroup(resourceGroupNames[0].name)
 param kvNamePrefix string = 'kv-'
-var rgString = '${subscription().id}/resourceGroups/${kvRg}'
-var kvName = '${kvNamePrefix}${uniqueString(rgString)}'
 
 @secure()
 param server string
@@ -98,6 +96,14 @@ module sqlDatabase './Modules/SQL/sqldatabase.bicep' = {
   ]
 }
 
+module kvName 'Modules/Management/kvName.bicep' = {
+  name: 'kvName'
+  scope: kvRg
+  params: {
+    kvNamePrefix: kvNamePrefix
+  }
+}
+
 module kv 'Modules/Management/kv.bicep' = {
   name: 'kv'
   scope: kvRg
@@ -109,25 +115,12 @@ module kv 'Modules/Management/kv.bicep' = {
     database: database
     password: localAdminPassword
     user: localAdminUsername
-    kvNamePrefix: kvNamePrefix
+    kvName: kvName.outputs.kvNameOutput
   }
   dependsOn: [
     resourceGroupsDeployment
   ]
 }
-
-// module st 'Modules/storage/storageaccount.bicep' = {
-//   name: 'st'
-//   scope: stRg
-//   params: {
-//     tags: tags
-//     location: location
-//     stNamePrefix: stNamePrefix
-//   }
-//   dependsOn: [
-//     resourceGroupsDeployment
-//   ]
-// }
 
 module function 'Modules/functions/function.bicep' = {
   name: 'function'
@@ -138,6 +131,6 @@ module function 'Modules/functions/function.bicep' = {
     stNamePrefix: stNamePrefix
     appServicePlanNamePrefix: appServicePlanNamePrefix
     functionNamePrefix: functionNamePrefix
-    kvName: kvName
+    kvName: kvName.outputs.kvNameOutput
   }
 }

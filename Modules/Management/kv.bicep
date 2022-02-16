@@ -1,5 +1,5 @@
 //params
-param kvNamePrefix string
+param kvName string
 param location string
 param tags object
 
@@ -13,8 +13,6 @@ param user string
 param password string
 @secure()
 param apiKey string
-
-var kvName = '${kvNamePrefix}${uniqueString(resourceGroup().id)}'
 
 //resources
 resource kv 'Microsoft.KeyVault/vaults@2021-10-01' = {
