@@ -12,7 +12,7 @@ param user string
 @secure()
 param password string
 @secure()
-param api_key string
+param apiKey string
 
 var kvName = '${kvNamePrefix}${uniqueString(resourceGroup().id)}'
 
@@ -84,9 +84,9 @@ resource kvPassword 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
 
 resource kvApi_key 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   parent: kv
-  name: 'api_key'
+  name: 'apikey'
   properties: {
     contentType: 'text/plain'
-    value: api_key
+    value: apiKey
   }
 }

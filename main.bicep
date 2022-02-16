@@ -36,12 +36,13 @@ param localAdminPassword string
 //paramters keyvault
 var kvRg = resourceGroup(resourceGroupNames[0].name)
 param kvNamePrefix string = 'kv-'
+
 @secure()
 param server string
 @secure()
 param database string
 @secure()
-param api_key string
+param apiKey string
 
 
 //parameters database
@@ -98,7 +99,7 @@ module kv 'Modules/Management/kv.bicep' = if (deployKv){
   params: {
     tags: tags
     location: location
-    api_key: api_key
+    apiKey: apiKey
     server: server
     database: database
     password: localAdminPassword
