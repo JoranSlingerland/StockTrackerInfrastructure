@@ -44,7 +44,7 @@ param apiKey string
 
 //paramaters storage account
 var stRg = resourceGroup(resourceGroupNames[2].name)
-var stNamePrefix = 'st-'
+var stNamePrefix = 'st'
 
 
 //parameters database
