@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "7740963097837242447"
+      "templateHash": "2335593399510306200"
     }
   },
   "parameters": {
@@ -717,7 +717,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "381294603972847254"
+              "templateHash": "16726894220943628557"
             }
           },
           "parameters": {
@@ -800,6 +800,22 @@
                     {
                       "name": "server",
                       "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/server)', parameters('kvName'))]"
+                    },
+                    {
+                      "name": "database",
+                      "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/database)', parameters('kvName'))]"
+                    },
+                    {
+                      "name": "user",
+                      "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/user)', parameters('kvName'))]"
+                    },
+                    {
+                      "name": "password",
+                      "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/password)', parameters('kvName'))]"
+                    },
+                    {
+                      "name": "api_key",
+                      "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/apikey)', parameters('kvName'))]"
                     }
                   ],
                   "numberOfWorkers": 1,
