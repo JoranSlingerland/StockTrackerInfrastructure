@@ -1,7 +1,5 @@
 //Parameters
 param location string
-@minLength(3)
-@maxLength(24)
 param stNamePrefix string
 param tags object
 
