@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "15065467366759555464"
+      "templateHash": "3664539378681230732"
     }
   },
   "parameters": {
@@ -65,11 +65,9 @@
     "localAdminPassword": {
       "type": "secureString"
     },
-    "kvName": {
+    "kvNamePrefix": {
       "type": "string",
-      "defaultValue": "kv-sttr-prod-westeu-001",
-      "maxLength": 24,
-      "minLength": 3
+      "defaultValue": "kv-"
     },
     "server": {
       "type": "secureString"
@@ -505,8 +503,8 @@
           "user": {
             "value": "[parameters('localAdminUsername')]"
           },
-          "kvName": {
-            "value": "[parameters('kvName')]"
+          "kvNamePrefix": {
+            "value": "[parameters('kvNamePrefix')]"
           }
         },
         "template": {
@@ -516,11 +514,11 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "7440232252642934930"
+              "templateHash": "6327652611668892709"
             }
           },
           "parameters": {
-            "kvName": {
+            "kvNamePrefix": {
               "type": "string"
             },
             "location": {
@@ -545,11 +543,14 @@
               "type": "secureString"
             }
           },
+          "variables": {
+            "kvName": "[format('{0}{1}', parameters('kvNamePrefix'), uniqueString(resourceGroup().id))]"
+          },
           "resources": [
             {
               "type": "Microsoft.KeyVault/vaults",
               "apiVersion": "2021-10-01",
-              "name": "[parameters('kvName')]",
+              "name": "[variables('kvName')]",
               "location": "[parameters('location')]",
               "tags": "[parameters('tags')]",
               "properties": {
@@ -558,6 +559,7 @@
                   "name": "standard"
                 },
                 "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [],
                 "enabledForDeployment": true,
                 "enabledForDiskEncryption": false,
                 "enabledForTemplateDeployment": true
@@ -566,61 +568,61 @@
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-10-01",
-              "name": "[format('{0}/{1}', parameters('kvName'), 'server')]",
+              "name": "[format('{0}/{1}', variables('kvName'), 'server')]",
               "properties": {
                 "contentType": "text/plain",
                 "value": "[parameters('server')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
               ]
             },
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-10-01",
-              "name": "[format('{0}/{1}', parameters('kvName'), 'database')]",
+              "name": "[format('{0}/{1}', variables('kvName'), 'database')]",
               "properties": {
                 "contentType": "text/plain",
                 "value": "[parameters('database')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
               ]
             },
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-10-01",
-              "name": "[format('{0}/{1}', parameters('kvName'), 'user')]",
+              "name": "[format('{0}/{1}', variables('kvName'), 'user')]",
               "properties": {
                 "contentType": "text/plain",
                 "value": "[parameters('user')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
               ]
             },
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-10-01",
-              "name": "[format('{0}/{1}', parameters('kvName'), 'password')]",
+              "name": "[format('{0}/{1}', variables('kvName'), 'password')]",
               "properties": {
                 "contentType": "text/plain",
                 "value": "[parameters('password')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
               ]
             },
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-10-01",
-              "name": "[format('{0}/{1}', parameters('kvName'), 'api_key')]",
+              "name": "[format('{0}/{1}', variables('kvName'), 'api_key')]",
               "properties": {
                 "contentType": "text/plain",
                 "value": "[parameters('api_key')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
               ]
             }
           ]
