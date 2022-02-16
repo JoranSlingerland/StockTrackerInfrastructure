@@ -5,26 +5,10 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "15247668066560274582"
+      "templateHash": "9983189991659332582"
     }
   },
   "parameters": {
-    "deployResoucegroups": {
-      "type": "bool",
-      "defaultValue": true
-    },
-    "deploySqlServer": {
-      "type": "bool",
-      "defaultValue": true
-    },
-    "deploySqlDatabases": {
-      "type": "bool",
-      "defaultValue": true
-    },
-    "deployKv": {
-      "type": "bool",
-      "defaultValue": true
-    },
     "location": {
       "type": "string",
       "defaultValue": "westeurope"
@@ -38,6 +22,10 @@
         },
         {
           "name": "rg-sql-prod-westeu-001",
+          "lockResourceGroup": false
+        },
+        {
+          "name": "rg-func-prod-westeu-001",
           "lockResourceGroup": false
         }
       ]
@@ -91,11 +79,12 @@
   "variables": {
     "sqlServerRg": "[createObject()]",
     "kvRg": "[createObject()]",
+    "stRg": "[createObject()]",
+    "stNamePrefix": "st-",
     "sqlDatabaseRg": "[createObject()]"
   },
   "resources": [
     {
-      "condition": "[parameters('deployResoucegroups')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "resourceGroupDeployment",
@@ -199,7 +188,6 @@
       }
     },
     {
-      "condition": "[parameters('deploySqlServer')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "sqlServer",
@@ -303,7 +291,6 @@
       ]
     },
     {
-      "condition": "[parameters('deploySqlDatabases')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "sqlDatabase",
@@ -471,7 +458,6 @@
       ]
     },
     {
-      "condition": "[parameters('deployKv')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
       "name": "kv",
@@ -514,7 +500,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "15054745488760881521"
+              "templateHash": "5864170873006396797"
             }
           },
           "parameters": {
@@ -624,6 +610,99 @@
               "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
               ]
+            }
+          ],
+          "outputs": {
+            "kv": {
+              "type": "string",
+              "value": "[variables('kvName')]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'resourceGroupDeployment')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "st",
+      "resourceGroup": "[parameters('resourceGroupNames')[2].name]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "tags": {
+            "value": "[parameters('tags')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "stNamePrefix": {
+            "value": "[variables('stNamePrefix')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "14381512186487617544"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "stNamePrefix": {
+              "type": "string",
+              "maxLength": 24,
+              "minLength": 3
+            },
+            "tags": {
+              "type": "object"
+            }
+          },
+          "variables": {
+            "storageAccountName": "[format('{0}{1}', parameters('stNamePrefix'), uniqueString(resourceGroup().id))]",
+            "accountType": "Standard_LRS",
+            "kind": "StorageV2",
+            "minimumTlsVersion": "TLS1_2",
+            "supportsHttpsTrafficOnly": true,
+            "allowBlobPublicAccess": false,
+            "allowSharedKeyAccess": true,
+            "networkAclsBypass": "AzureServices",
+            "networkAclsDefaultAction": "Deny",
+            "largeFileSharesState": "Enabled"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2019-06-01",
+              "name": "[variables('storageAccountName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
+              "properties": {
+                "minimumTlsVersion": "[variables('minimumTlsVersion')]",
+                "supportsHttpsTrafficOnly": "[variables('supportsHttpsTrafficOnly')]",
+                "allowBlobPublicAccess": "[variables('allowBlobPublicAccess')]",
+                "allowSharedKeyAccess": "[variables('allowSharedKeyAccess')]",
+                "networkAcls": {
+                  "bypass": "[variables('networkAclsBypass')]",
+                  "defaultAction": "[variables('networkAclsDefaultAction')]",
+                  "ipRules": []
+                },
+                "largeFileSharesState": "[variables('largeFileSharesState')]"
+              },
+              "sku": {
+                "name": "[variables('accountType')]"
+              },
+              "kind": "[variables('kind')]"
             }
           ]
         }
