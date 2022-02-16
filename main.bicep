@@ -1,9 +1,3 @@
-//resources to deploy
-param deployResoucegroups bool = true
-param deploySqlServer bool = true
-param deploySqlDatabases bool = true
-param deployKv bool = true
-
 // generic parameters
 targetScope = 'subscription'
 param location string = 'westeurope'
@@ -14,6 +8,10 @@ param resourceGroupNames array = [
   }
   {
     name:'rg-sql-prod-westeu-001'
+    lockResourceGroup: false
+  }
+  {
+    name: 'rg-func-prod-westeu-001'
     lockResourceGroup: false
   }
 ]
@@ -44,6 +42,10 @@ param database string
 @secure()
 param apiKey string
 
+//paramaters storage account
+var stRg = resourceGroup(resourceGroupNames[2].name)
+var stNamePrefix = 'st-'
+
 
 //parameters database
 var sqlDatabaseRg = resourceGroup(resourceGroupNames[1].name)
@@ -54,7 +56,7 @@ param sqlDatabases array = [
   }
 ]
 
-module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = if (deployResoucegroups){
+module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = {
   name: 'resourceGroupDeployment'
   params: {
     location: location
@@ -63,7 +65,7 @@ module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = if
   } 
 }
 
-module sqlServer './Modules/SQL/sqlserver.bicep' = if (deploySqlServer) {
+module sqlServer './Modules/SQL/sqlserver.bicep' = {
   name: 'sqlServer'
   scope: sqlServerRg
   params: {
@@ -78,7 +80,7 @@ module sqlServer './Modules/SQL/sqlserver.bicep' = if (deploySqlServer) {
   ]
 }
 
-module sqlDatabase './Modules/SQL/sqldatabase.bicep' = if (deploySqlDatabases){
+module sqlDatabase './Modules/SQL/sqldatabase.bicep' = {
   name: 'sqlDatabase'
   scope: sqlDatabaseRg
   params: {
@@ -93,7 +95,7 @@ module sqlDatabase './Modules/SQL/sqldatabase.bicep' = if (deploySqlDatabases){
   ]
 }
 
-module kv 'Modules/Management/kv.bicep' = if (deployKv){
+module kv 'Modules/Management/kv.bicep' = {
   name: 'kv'
   scope: kvRg
   params: {
@@ -105,6 +107,19 @@ module kv 'Modules/Management/kv.bicep' = if (deployKv){
     password: localAdminPassword
     user: localAdminUsername
     kvNamePrefix: kvNamePrefix
+  }
+  dependsOn: [
+    resourceGroupsDeployment
+  ]
+}
+
+module st 'Modules/storage/storageaccount.bicep' = {
+  name: 'st'
+  scope: stRg
+  params: {
+    tags: tags
+    location: location
+    stNamePrefix: stNamePrefix
   }
   dependsOn: [
     resourceGroupsDeployment

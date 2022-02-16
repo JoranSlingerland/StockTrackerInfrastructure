@@ -90,3 +90,5 @@ resource kvApi_key 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
     value: apiKey
   }
 }
+
+output kv string = kvName
