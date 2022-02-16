@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "1338853961591221744"
+      "templateHash": "7740963097837242447"
     }
   },
   "parameters": {
@@ -536,6 +536,9 @@
           },
           "kvName": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[0].name), 'Microsoft.Resources/deployments', 'kvName')).outputs.kvNameOutput.value]"
+          },
+          "functionId": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[2].name), 'Microsoft.Resources/deployments', 'function')).outputs.functionId.value]"
           }
         },
         "template": {
@@ -545,7 +548,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "10166500660643417515"
+              "templateHash": "13920520958961304213"
             }
           },
           "parameters": {
@@ -557,6 +560,9 @@
             },
             "tags": {
               "type": "object"
+            },
+            "functionId": {
+              "type": "string"
             },
             "server": {
               "type": "secureString"
@@ -587,7 +593,19 @@
                   "name": "standard"
                 },
                 "tenantId": "[subscription().tenantId]",
-                "accessPolicies": [],
+                "accessPolicies": [
+                  {
+                    "tenantId": "[subscription().tenantId]",
+                    "objectId": "[reference(parameters('functionId'), '2019-08-01', 'full').identity.principalId]",
+                    "permissions": {
+                      "keys": [],
+                      "secrets": [
+                        "get"
+                      ],
+                      "certificates": []
+                    }
+                  }
+                ],
                 "enabledForDeployment": true,
                 "enabledForDiskEncryption": false,
                 "enabledForTemplateDeployment": true
@@ -653,16 +671,11 @@
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
               ]
             }
-          ],
-          "outputs": {
-            "kv": {
-              "type": "string",
-              "value": "[parameters('kvName')]"
-            }
-          }
+          ]
         }
       },
       "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[2].name), 'Microsoft.Resources/deployments', 'function')]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[0].name), 'Microsoft.Resources/deployments', 'kvName')]",
         "[subscriptionResourceId('Microsoft.Resources/deployments', 'resourceGroupDeployment')]"
       ]
@@ -704,7 +717,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "9381057047142351776"
+              "templateHash": "381294603972847254"
             }
           },
           "parameters": {
@@ -863,11 +876,18 @@
               },
               "kind": "[variables('kind')]"
             }
-          ]
+          ],
+          "outputs": {
+            "functionId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/sites', variables('functionName'))]"
+            }
+          }
         }
       },
       "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[0].name), 'Microsoft.Resources/deployments', 'kvName')]"
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[0].name), 'Microsoft.Resources/deployments', 'kvName')]",
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'resourceGroupDeployment')]"
       ]
     }
   ]
