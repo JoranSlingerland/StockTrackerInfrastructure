@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "2058332613868574386"
+      "templateHash": "1197241138843822613"
     }
   },
   "parameters": {
@@ -79,11 +79,12 @@
   "variables": {
     "sqlServerRg": "[createObject()]",
     "kvRg": "[createObject()]",
-    "stRg": "[createObject()]",
-    "stNamePrefix": "st",
+    "rgString": "[format('{0}/resourceGroups/{1}', subscription().id, variables('kvRg'))]",
+    "kvName": "[format('{0}{1}', parameters('kvNamePrefix'), uniqueString(variables('rgString')))]",
     "functionRg": "[createObject()]",
     "appServicePlanNamePrefix": "plan-",
     "functionNamePrefix": "func-",
+    "stNamePrefix": "st",
     "sqlDatabaseRg": "[createObject()]"
   },
   "resources": [
@@ -652,6 +653,9 @@
           },
           "functionNamePrefix": {
             "value": "[variables('functionNamePrefix')]"
+          },
+          "kvName": {
+            "value": "[variables('kvName')]"
           }
         },
         "template": {
@@ -661,7 +665,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "14190493020443568981"
+              "templateHash": "9381057047142351776"
             }
           },
           "parameters": {
@@ -679,6 +683,9 @@
             },
             "tags": {
               "type": "object"
+            },
+            "kvName": {
+              "type": "string"
             }
           },
           "variables": {
@@ -705,6 +712,7 @@
               },
               "location": "[parameters('location')]",
               "kind": "functionapp,linux",
+              "tags": "[parameters('tags')]",
               "properties": {
                 "hostNameSslStates": [
                   {
@@ -736,6 +744,10 @@
                     {
                       "name": "AzureWebJobsStorage",
                       "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value)]"
+                    },
+                    {
+                      "name": "server",
+                      "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/server)', parameters('kvName'))]"
                     }
                   ],
                   "numberOfWorkers": 1,
@@ -769,6 +781,7 @@
               "apiVersion": "2018-02-01",
               "name": "[variables('appServicePlanName')]",
               "location": "[parameters('location')]",
+              "tags": "[parameters('tags')]",
               "sku": {
                 "name": "Y1",
                 "tier": "Dynamic",
