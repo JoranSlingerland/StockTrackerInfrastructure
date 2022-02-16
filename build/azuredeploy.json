@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "1872129556049034148"
+      "templateHash": "2058332613868574386"
     }
   },
   "parameters": {
@@ -81,6 +81,9 @@
     "kvRg": "[createObject()]",
     "stRg": "[createObject()]",
     "stNamePrefix": "st",
+    "functionRg": "[createObject()]",
+    "appServicePlanNamePrefix": "plan-",
+    "functionNamePrefix": "func-",
     "sqlDatabaseRg": "[createObject()]"
   },
   "resources": [
@@ -627,7 +630,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
-      "name": "st",
+      "name": "function",
       "resourceGroup": "[parameters('resourceGroupNames')[2].name]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -643,6 +646,12 @@
           },
           "stNamePrefix": {
             "value": "[variables('stNamePrefix')]"
+          },
+          "appServicePlanNamePrefix": {
+            "value": "[variables('appServicePlanNamePrefix')]"
+          },
+          "functionNamePrefix": {
+            "value": "[variables('functionNamePrefix')]"
           }
         },
         "template": {
@@ -652,11 +661,17 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "2777360495967958017"
+              "templateHash": "14190493020443568981"
             }
           },
           "parameters": {
             "location": {
+              "type": "string"
+            },
+            "appServicePlanNamePrefix": {
+              "type": "string"
+            },
+            "functionNamePrefix": {
               "type": "string"
             },
             "stNamePrefix": {
@@ -667,6 +682,8 @@
             }
           },
           "variables": {
+            "appServicePlanName": "[format('{0}{1}', parameters('appServicePlanNamePrefix'), uniqueString(resourceGroup().id))]",
+            "functionName": "[format('{0}{1}', parameters('functionNamePrefix'), uniqueString(resourceGroup().id))]",
             "storageAccountName": "[format('{0}{1}', parameters('stNamePrefix'), uniqueString(resourceGroup().id))]",
             "accountType": "Standard_LRS",
             "kind": "StorageV2",
@@ -679,6 +696,98 @@
             "largeFileSharesState": "Enabled"
           },
           "resources": [
+            {
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2021-03-01",
+              "name": "[variables('functionName')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "location": "[parameters('location')]",
+              "kind": "functionapp,linux",
+              "properties": {
+                "hostNameSslStates": [
+                  {
+                    "name": "[format('{0}.azurewebsites.net', variables('functionName'))]",
+                    "sslState": "Disabled",
+                    "hostType": "Standard"
+                  },
+                  {
+                    "name": "[format('{0}.scm.azurewebsites.net', variables('functionName'))]",
+                    "sslState": "Disabled",
+                    "hostType": "Repository"
+                  }
+                ],
+                "enabled": true,
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "reserved": true,
+                "isXenon": false,
+                "hyperV": false,
+                "siteConfig": {
+                  "appSettings": [
+                    {
+                      "name": "FUNCTIONS_EXTENSION_VERSION",
+                      "value": "~4"
+                    },
+                    {
+                      "name": "FUNCTIONS_WORKER_RUNTIME",
+                      "value": "python"
+                    },
+                    {
+                      "name": "AzureWebJobsStorage",
+                      "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value)]"
+                    }
+                  ],
+                  "numberOfWorkers": 1,
+                  "linuxFxVersion": "Python|3.9",
+                  "acrUseManagedIdentityCreds": false,
+                  "alwaysOn": false,
+                  "http20Enabled": false,
+                  "functionAppScaleLimit": 200,
+                  "minimumElasticInstanceCount": 0
+                },
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "clientCertMode": "Required",
+                "hostNamesDisabled": false,
+                "customDomainVerificationId": "61AE8477F2145B6AF7100EEC8FD3FFCFB4702811C04010012621EA24BBB80944",
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": true,
+                "redundancyMode": "None",
+                "storageAccountRequired": false,
+                "keyVaultReferenceIdentity": "SystemAssigned"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2018-02-01",
+              "name": "[variables('appServicePlanName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+              },
+              "kind": "functionapp",
+              "properties": {
+                "perSiteScaling": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": true,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+              }
+            },
             {
               "type": "Microsoft.Storage/storageAccounts",
               "apiVersion": "2019-06-01",
@@ -704,10 +813,7 @@
             }
           ]
         }
-      },
-      "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', 'resourceGroupDeployment')]"
-      ]
+      }
     }
   ]
 }
