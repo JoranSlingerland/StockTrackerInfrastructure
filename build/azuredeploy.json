@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "1197241138843822613"
+      "templateHash": "1338853961591221744"
     }
   },
   "parameters": {
@@ -79,8 +79,6 @@
   "variables": {
     "sqlServerRg": "[createObject()]",
     "kvRg": "[createObject()]",
-    "rgString": "[format('{0}/resourceGroups/{1}', subscription().id, variables('kvRg'))]",
-    "kvName": "[format('{0}{1}', parameters('kvNamePrefix'), uniqueString(variables('rgString')))]",
     "functionRg": "[createObject()]",
     "appServicePlanNamePrefix": "plan-",
     "functionNamePrefix": "func-",
@@ -464,6 +462,49 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-10-01",
+      "name": "kvName",
+      "resourceGroup": "[parameters('resourceGroupNames')[0].name]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "kvNamePrefix": {
+            "value": "[parameters('kvNamePrefix')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1272.37030",
+              "templateHash": "12788631430716794089"
+            }
+          },
+          "parameters": {
+            "kvNamePrefix": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "kvName": "[format('{0}{1}', parameters('kvNamePrefix'), uniqueString(resourceGroup().id))]"
+          },
+          "resources": [],
+          "outputs": {
+            "kvNameOutput": {
+              "type": "string",
+              "value": "[variables('kvName')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
       "name": "kv",
       "resourceGroup": "[parameters('resourceGroupNames')[0].name]",
       "properties": {
@@ -493,8 +534,8 @@
           "user": {
             "value": "[parameters('localAdminUsername')]"
           },
-          "kvNamePrefix": {
-            "value": "[parameters('kvNamePrefix')]"
+          "kvName": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[0].name), 'Microsoft.Resources/deployments', 'kvName')).outputs.kvNameOutput.value]"
           }
         },
         "template": {
@@ -504,11 +545,11 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "5864170873006396797"
+              "templateHash": "10166500660643417515"
             }
           },
           "parameters": {
-            "kvNamePrefix": {
+            "kvName": {
               "type": "string"
             },
             "location": {
@@ -533,14 +574,11 @@
               "type": "secureString"
             }
           },
-          "variables": {
-            "kvName": "[format('{0}{1}', parameters('kvNamePrefix'), uniqueString(resourceGroup().id))]"
-          },
           "resources": [
             {
               "type": "Microsoft.KeyVault/vaults",
               "apiVersion": "2021-10-01",
-              "name": "[variables('kvName')]",
+              "name": "[parameters('kvName')]",
               "location": "[parameters('location')]",
               "tags": "[parameters('tags')]",
               "properties": {
@@ -558,73 +596,74 @@
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-10-01",
-              "name": "[format('{0}/{1}', variables('kvName'), 'server')]",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'server')]",
               "properties": {
                 "contentType": "text/plain",
                 "value": "[parameters('server')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
               ]
             },
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-10-01",
-              "name": "[format('{0}/{1}', variables('kvName'), 'database')]",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'database')]",
               "properties": {
                 "contentType": "text/plain",
                 "value": "[parameters('database')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
               ]
             },
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-10-01",
-              "name": "[format('{0}/{1}', variables('kvName'), 'user')]",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'user')]",
               "properties": {
                 "contentType": "text/plain",
                 "value": "[parameters('user')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
               ]
             },
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-10-01",
-              "name": "[format('{0}/{1}', variables('kvName'), 'password')]",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'password')]",
               "properties": {
                 "contentType": "text/plain",
                 "value": "[parameters('password')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
               ]
             },
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2021-10-01",
-              "name": "[format('{0}/{1}', variables('kvName'), 'apikey')]",
+              "name": "[format('{0}/{1}', parameters('kvName'), 'apikey')]",
               "properties": {
                 "contentType": "text/plain",
                 "value": "[parameters('apiKey')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('kvName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('kvName'))]"
               ]
             }
           ],
           "outputs": {
             "kv": {
               "type": "string",
-              "value": "[variables('kvName')]"
+              "value": "[parameters('kvName')]"
             }
           }
         }
       },
       "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[0].name), 'Microsoft.Resources/deployments', 'kvName')]",
         "[subscriptionResourceId('Microsoft.Resources/deployments', 'resourceGroupDeployment')]"
       ]
     },
@@ -655,7 +694,7 @@
             "value": "[variables('functionNamePrefix')]"
           },
           "kvName": {
-            "value": "[variables('kvName')]"
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[0].name), 'Microsoft.Resources/deployments', 'kvName')).outputs.kvNameOutput.value]"
           }
         },
         "template": {
@@ -826,7 +865,10 @@
             }
           ]
         }
-      }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('resourceGroupNames')[0].name), 'Microsoft.Resources/deployments', 'kvName')]"
+      ]
     }
   ]
 }
