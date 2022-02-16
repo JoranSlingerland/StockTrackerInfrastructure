@@ -34,6 +34,8 @@ param localAdminPassword string
 //paramters keyvault
 var kvRg = resourceGroup(resourceGroupNames[0].name)
 param kvNamePrefix string = 'kv-'
+var rgString = '${subscription().id}/resourceGroups/${kvRg}'
+var kvName = '${kvNamePrefix}${uniqueString(rgString)}'
 
 @secure()
 param server string
@@ -42,14 +44,11 @@ param database string
 @secure()
 param apiKey string
 
-//paramaters storage account
-var stRg = resourceGroup(resourceGroupNames[2].name)
-var stNamePrefix = 'st'
-
 //Paramters Function
 var functionRg = resourceGroup(resourceGroupNames[2].name)
 var appServicePlanNamePrefix = 'plan-'
 var functionNamePrefix = 'func-'
+var stNamePrefix = 'st'
 
 //parameters database
 var sqlDatabaseRg = resourceGroup(resourceGroupNames[1].name)
@@ -139,5 +138,6 @@ module function 'Modules/functions/function.bicep' = {
     stNamePrefix: stNamePrefix
     appServicePlanNamePrefix: appServicePlanNamePrefix
     functionNamePrefix: functionNamePrefix
+    kvName: kvName
   }
 }

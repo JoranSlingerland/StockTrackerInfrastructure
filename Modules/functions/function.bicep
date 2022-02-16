@@ -4,6 +4,7 @@ param appServicePlanNamePrefix string
 param functionNamePrefix string
 param stNamePrefix string
 param tags object
+param kvName string
 
 //variables
 var appServicePlanName = '${appServicePlanNamePrefix}${uniqueString(resourceGroup().id)}'
@@ -27,7 +28,7 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
   name: functionName
   location: location
   kind: 'functionapp,linux'
-
+  tags: tags
   properties: {
     hostNameSslStates: [
       {
@@ -59,6 +60,10 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
         {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
+        }
+        {
+          name: 'server'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/server)'
         }
       ]
       numberOfWorkers: 1
@@ -98,6 +103,7 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
 resource appServicePlan 'Microsoft.Web/serverfarms@2018-02-01' = {
   name: appServicePlanName
   location: location
+  tags: tags
   sku: {
     name: 'Y1'
     tier: 'Dynamic'
