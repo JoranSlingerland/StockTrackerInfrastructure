@@ -145,3 +145,5 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   }
   kind: kind
 }
+
+output functionId string = functionSite.id

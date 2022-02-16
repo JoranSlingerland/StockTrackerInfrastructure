@@ -116,9 +116,12 @@ module kv 'Modules/Management/kv.bicep' = {
     password: localAdminPassword
     user: localAdminUsername
     kvName: kvName.outputs.kvNameOutput
+    functionId: function.outputs.functionId
   }
   dependsOn: [
     resourceGroupsDeployment
+    kvName
+    function
   ]
 }
 
@@ -133,4 +136,8 @@ module function 'Modules/functions/function.bicep' = {
     functionNamePrefix: functionNamePrefix
     kvName: kvName.outputs.kvNameOutput
   }
+  dependsOn: [
+    resourceGroupsDeployment
+    kvName
+  ]
 }

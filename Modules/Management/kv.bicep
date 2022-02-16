@@ -2,6 +2,7 @@
 param kvName string
 param location string
 param tags object
+param functionId string
 
 @secure()
 param server string
@@ -25,19 +26,19 @@ resource kv 'Microsoft.KeyVault/vaults@2021-10-01' = {
       name: 'standard'
     }
     tenantId: subscription().tenantId
-    accessPolicies: []
-    //   {
-    //     tenantId: subscription().tenantId
-    //     objectId: reference(funcAppName.id, '2019-08-01', 'full').identity.principalId
-    //     permissions: {
-    //       keys: []
-    //       secrets: [
-    //         'get'
-    //       ]
-    //       certificates: []
-    //     }
-    //   }
-    //]
+    accessPolicies: [
+      {
+        tenantId: subscription().tenantId
+        objectId: reference(functionId, '2019-08-01', 'full').identity.principalId
+        permissions: {
+          keys: []
+          secrets: [
+            'get'
+          ]
+          certificates: []
+        }
+      }
+    ]
     enabledForDeployment: true
     enabledForDiskEncryption: false
     enabledForTemplateDeployment: true
@@ -88,5 +89,3 @@ resource kvApi_key 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
     value: apiKey
   }
 }
-
-output kv string = kvName
