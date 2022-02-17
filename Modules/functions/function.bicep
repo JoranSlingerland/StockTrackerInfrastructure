@@ -105,17 +105,6 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
   }
 }
 
-// resource funcAppName_web 'Microsoft.Web/sites/sourcecontrols@2015-08-01' = {
-//   parent: funcAppName
-//   name: 'web'
-//   properties: {
-//     repoUrl: repoURL
-//     branch: 'master'
-//     publishRunbook: true
-//     isManualIntegration: true
-//   }
-// }
-
 resource appServicePlan 'Microsoft.Web/serverfarms@2018-02-01' = {
   name: appServicePlanName
   location: location
@@ -145,16 +134,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   location: location
   tags: tags
   properties: {
-    minimumTlsVersion: minimumTlsVersion
-    supportsHttpsTrafficOnly: supportsHttpsTrafficOnly
-    allowBlobPublicAccess: allowBlobPublicAccess
-    allowSharedKeyAccess: allowSharedKeyAccess
-    networkAcls: {
-      bypass: networkAclsBypass
-      defaultAction: networkAclsDefaultAction
-      ipRules: []
-    }
-    largeFileSharesState: largeFileSharesState
   }
   sku: {
     name: accountType
