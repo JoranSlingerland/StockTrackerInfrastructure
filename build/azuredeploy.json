@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "16869984384596426179"
+      "templateHash": "856082618839061078"
     }
   },
   "parameters": {
@@ -717,7 +717,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "17118300067593086023"
+              "templateHash": "209099125710418760"
             }
           },
           "parameters": {
@@ -745,14 +745,7 @@
             "functionName": "[format('{0}{1}', parameters('functionNamePrefix'), uniqueString(resourceGroup().id))]",
             "storageAccountName": "[format('{0}{1}', parameters('stNamePrefix'), uniqueString(resourceGroup().id))]",
             "accountType": "Standard_LRS",
-            "kind": "StorageV2",
-            "minimumTlsVersion": "TLS1_2",
-            "supportsHttpsTrafficOnly": true,
-            "allowBlobPublicAccess": false,
-            "allowSharedKeyAccess": true,
-            "networkAclsBypass": "AzureServices",
-            "networkAclsDefaultAction": "Deny",
-            "largeFileSharesState": "Enabled"
+            "kind": "StorageV2"
           },
           "resources": [
             {
