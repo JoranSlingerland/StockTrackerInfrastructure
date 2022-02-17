@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1272.37030",
-      "templateHash": "856082618839061078"
+      "templateHash": "11634046037802091815"
     }
   },
   "parameters": {
@@ -717,7 +717,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1272.37030",
-              "templateHash": "209099125710418760"
+              "templateHash": "4097154914617087684"
             }
           },
           "parameters": {
@@ -785,6 +785,14 @@
                     {
                       "name": "FUNCTIONS_WORKER_RUNTIME",
                       "value": "python"
+                    },
+                    {
+                      "name": "ENABLE_ORYX_BUILD",
+                      "value": "1"
+                    },
+                    {
+                      "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+                      "value": "1"
                     },
                     {
                       "name": "AzureWebJobsStorage",
