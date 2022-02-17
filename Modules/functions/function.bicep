@@ -12,13 +12,6 @@ var functionName = '${functionNamePrefix}${uniqueString(resourceGroup().id)}'
 var storageAccountName = '${stNamePrefix}${uniqueString(resourceGroup().id)}'
 var accountType = 'Standard_LRS'
 var kind = 'StorageV2'
-// var minimumTlsVersion = 'TLS1_2'
-// var supportsHttpsTrafficOnly = true
-// var allowBlobPublicAccess = false
-// var allowSharedKeyAccess = true
-// var networkAclsBypass = 'AzureServices'
-// var networkAclsDefaultAction = 'Deny'
-// var largeFileSharesState = 'Enabled'
 
 //resouces
 resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
@@ -56,6 +49,14 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'python'
+        }
+        {
+          name: 'ENABLE_ORYX_BUILD'
+          value: '1'
+        }
+        {
+          name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
+          value: '1'
         }
         {
           name: 'AzureWebJobsStorage'
