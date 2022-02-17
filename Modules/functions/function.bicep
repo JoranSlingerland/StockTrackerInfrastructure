@@ -12,13 +12,13 @@ var functionName = '${functionNamePrefix}${uniqueString(resourceGroup().id)}'
 var storageAccountName = '${stNamePrefix}${uniqueString(resourceGroup().id)}'
 var accountType = 'Standard_LRS'
 var kind = 'StorageV2'
-var minimumTlsVersion = 'TLS1_2'
-var supportsHttpsTrafficOnly = true
-var allowBlobPublicAccess = false
-var allowSharedKeyAccess = true
-var networkAclsBypass = 'AzureServices'
-var networkAclsDefaultAction = 'Deny'
-var largeFileSharesState = 'Enabled'
+// var minimumTlsVersion = 'TLS1_2'
+// var supportsHttpsTrafficOnly = true
+// var allowBlobPublicAccess = false
+// var allowSharedKeyAccess = true
+// var networkAclsBypass = 'AzureServices'
+// var networkAclsDefaultAction = 'Deny'
+// var largeFileSharesState = 'Enabled'
 
 //resouces
 resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
