@@ -63,23 +63,23 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
         }
         {
-          name: 'server'
+          name: 'SERVER'
           value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/server)'
         }
         {
-          name: 'database'
+          name: 'DATABASE'
           value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/database)'
         }
         {
-          name: 'user'
+          name: 'USER'
           value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/user)'
         }
         {
-          name: 'password'
+          name: 'PASSWORD'
           value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/password)'
         }
         {
-          name: 'api_key'
+          name: 'API_KEY'
           value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/apikey)'
         }
       ]
