@@ -799,23 +799,23 @@
                       "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value)]"
                     },
                     {
-                      "name": "server",
+                      "name": "SERVER",
                       "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/server)', parameters('kvName'))]"
                     },
                     {
-                      "name": "database",
+                      "name": "DATABASE",
                       "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/database)', parameters('kvName'))]"
                     },
                     {
-                      "name": "user",
+                      "name": "USER",
                       "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/user)', parameters('kvName'))]"
                     },
                     {
-                      "name": "password",
+                      "name": "PASSWORD",
                       "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/password)', parameters('kvName'))]"
                     },
                     {
-                      "name": "api_key",
+                      "name": "API_KEY",
                       "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/apikey)', parameters('kvName'))]"
                     }
                   ],
