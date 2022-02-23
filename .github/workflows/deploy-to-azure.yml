@@ -2,6 +2,9 @@ on:
   push:
     paths-ignore:
       - "build"
+    branches:
+      - "main"
+
 name: Deploy to Azure
 jobs:
   build-and-deploy:

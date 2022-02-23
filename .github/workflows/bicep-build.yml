@@ -3,6 +3,9 @@ on:
     paths-ignore:
       - "build"
       - ".github"
+    branches:
+      - "main"
+
 name: Bicep-Build
 
 jobs:
