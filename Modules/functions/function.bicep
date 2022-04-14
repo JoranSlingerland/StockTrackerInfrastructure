@@ -5,6 +5,7 @@ param functionNamePrefix string
 param stNamePrefix string
 param tags object
 param kvName string
+param appInsightsInstrumentationKey string
 
 //variables
 var appServicePlanName = '${appServicePlanNamePrefix}${uniqueString(resourceGroup().id)}'
@@ -81,6 +82,10 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
         {
           name: 'API_KEY'
           value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/apikey)'
+        }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsInstrumentationKey
         }
       ]
       numberOfWorkers: 1

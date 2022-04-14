@@ -22,6 +22,7 @@ param tags object = {
   'env': 'prod'
   'utcdatedeployed': basetime
   'project': 'Stocktracker'
+  'deployment_type': 'Bicep'
 }
 
 //parameters sql server
@@ -146,10 +147,12 @@ module function 'Modules/functions/function.bicep' = {
     appServicePlanNamePrefix: appServicePlanNamePrefix
     functionNamePrefix: functionNamePrefix
     kvName: kvName.outputs.kvNameOutput
+    appInsightsInstrumentationKey: ai.outputs.appInsightsInstrumentationKey
   }
   dependsOn: [
     resourceGroupsDeployment
     kvName
+    ai
   ]
 }
 

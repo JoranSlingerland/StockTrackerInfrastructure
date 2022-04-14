@@ -295,3 +295,5 @@ resource slowserverresponsetime 'microsoft.insights/components/ProactiveDetectio
     CustomEmails: []
   }
 }
+
+output appInsightsInstrumentationKey string = appInsights.properties.InstrumentationKey
