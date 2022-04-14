@@ -67,7 +67,10 @@ param logAnalyticsWorkspaceSku string = 'PerGB2018'
 var appInsightsRg = resourceGroup(resourceGroupNames[0].name)
 param appInsightsNamePrefix string = 'ai-'
 
-
+//Static web app parameters
+var swaRg = resourceGroup(resourceGroupNames[2].name)
+param swaNamePrefix string = 'swa-'
+param swaGitRepo string = 'https://github.com/JoranSlingerland/Stocktracker-FrontEnd'
 
 module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = {
   name: 'resourceGroupDeployment'
@@ -182,5 +185,19 @@ module ai 'Modules/Management/appInsights.bicep' = {
   dependsOn: [
     resourceGroupsDeployment
     la
+  ]
+}
+
+module swa 'Modules/functions/swa.bicep' = {
+  name: 'swa'
+  scope: swaRg
+  params: {
+    tags: tags
+    location: location
+    swaNamePrefix: swaNamePrefix
+    gitRepo: swaGitRepo
+  }
+  dependsOn: [
+    resourceGroupsDeployment
   ]
 }
