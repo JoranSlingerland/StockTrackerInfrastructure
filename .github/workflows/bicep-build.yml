@@ -12,20 +12,21 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-
       # Checkout code
-    - uses: actions/checkout@main
-    
-    - name: Bicep Build
-      uses: Azure/bicep-build-action@v1.0.0
-      with:
-        bicepFilePath: main.bicep
-        outputFilePath: build/azuredeploy.json
-    
-    - name: Push to git
-      run: |
-            git add .
-            git config user.name github-actions
-            git config user.email github-actions@github.com
-            git commit -am "Azure deploy file"
-            git push
+      - uses: actions/checkout@main
+
+      - name: Bicep Build
+        uses: Azure/bicep-build-action@v1.0.0
+        with:
+          bicepFilePath: main.bicep
+          outputFilePath: azuredeploy.json
+
+      - name: gist-sync
+        uses: Popsiclestick/gist-sync-action@v1.2.0
+        id: sync
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gist_url: https://gist.github.com/JoranSlingerland/a9087b977db092d71212e442dd5c5975
+          gist_title: StocktrackerBuild
+          gist_description: Stocktracker Build file
+          github_file: azuredeploy.json
