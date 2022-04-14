@@ -10,22 +10,21 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-
       # Checkout code
-    - uses: actions/checkout@main
+      - uses: actions/checkout@main
 
-      # Log into Azure
-    - uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        # Log into Azure
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Deploy Bicep file
-    - name: deploy
-      uses: azure/arm-deploy@v1
-      with:
-        scope: subscription
-        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-        region: westeurope
-        template: ./main.bicep
-        deploymentname: Stocktracker
-        parameters: localAdminPassword=${{ secrets.SQLPASSWORD }} server=${{ secrets.SERVER}} database=${{ secrets.DATABASE}} apiKey=${{ secrets.APIKEY}}
+        # Deploy Bicep file
+      - name: deploy
+        uses: azure/arm-deploy@v1
+        with:
+          scope: subscription
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          region: westeurope
+          template: ./main.bicep
+          deploymentname: Stocktracker
+          parameters: localAdminPassword=${{ secrets.SQLPASSWORD }} server=${{ secrets.SERVER}} database=${{ secrets.DATABASE}} apiKey=${{ secrets.APIKEY}} repositoryToken=${{ secrets.SWA_REPO_TOKEN }}

@@ -71,6 +71,8 @@ param appInsightsNamePrefix string = 'ai-'
 var swaRg = resourceGroup(resourceGroupNames[2].name)
 param swaNamePrefix string = 'swa-'
 param swaGitRepo string = 'https://github.com/JoranSlingerland/Stocktracker-FrontEnd'
+@secure()
+param repositoryToken string
 
 module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = {
   name: 'resourceGroupDeployment'
@@ -196,6 +198,7 @@ module swa 'Modules/functions/swa.bicep' = {
     location: location
     swaNamePrefix: swaNamePrefix
     gitRepo: swaGitRepo
+    repositoryToken: repositoryToken
   }
   dependsOn: [
     resourceGroupsDeployment
