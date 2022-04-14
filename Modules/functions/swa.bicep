@@ -22,6 +22,10 @@ resource swa 'Microsoft.Web/staticSites@2021-03-01' = {
     provider: 'GitHub'
     enterpriseGradeCdnStatus: 'Disabled'
     repositoryToken: repositoryToken
+    buildProperties: {
+      appLocation: '/'
+      outputLocation: 'out'
+    }
   }
   tags: tags
 }
