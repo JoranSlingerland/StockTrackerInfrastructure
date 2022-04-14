@@ -57,6 +57,11 @@ param sqlDatabases array = [
   }
 ]
 
+//Log analytics parameters
+var logAnalyticsRg = resourceGroup(resourceGroupNames[0].name)
+param logAnalyticsNamePrefix string = 'la-'
+param logAnalyticsWorkspaceSku string = 'PerGB2018'
+
 module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = {
   name: 'resourceGroupDeployment'
   params: {
@@ -139,5 +144,19 @@ module function 'Modules/functions/function.bicep' = {
   dependsOn: [
     resourceGroupsDeployment
     kvName
+  ]
+}
+
+module la 'Modules/Management/logAnalytics.bicep' = {
+  name: 'la'
+  scope: logAnalyticsRg
+  params: {
+    tags: tags
+    location: location
+    logAnalyticsNamePrefix: logAnalyticsNamePrefix
+    logAnalyticsWorkspaceSku: logAnalyticsWorkspaceSku
+  }
+  dependsOn: [
+    resourceGroupsDeployment
   ]
 }
