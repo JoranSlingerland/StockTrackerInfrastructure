@@ -62,6 +62,12 @@ var logAnalyticsRg = resourceGroup(resourceGroupNames[0].name)
 param logAnalyticsNamePrefix string = 'la-'
 param logAnalyticsWorkspaceSku string = 'PerGB2018'
 
+//App Insights parameters
+var appInsightsRg = resourceGroup(resourceGroupNames[0].name)
+param appInsightsNamePrefix string = 'ai-'
+
+
+
 module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = {
   name: 'resourceGroupDeployment'
   params: {
@@ -158,5 +164,20 @@ module la 'Modules/Management/logAnalytics.bicep' = {
   }
   dependsOn: [
     resourceGroupsDeployment
+  ]
+}
+
+module ai 'Modules/Management/appInsights.bicep' = {
+  name: 'ai'
+  scope: appInsightsRg
+  params: {
+    tags: tags
+    location: location
+    appInsightsNamePrefix: appInsightsNamePrefix
+    laId: la.outputs.laId
+  }
+  dependsOn: [
+    resourceGroupsDeployment
+    la
   ]
 }
