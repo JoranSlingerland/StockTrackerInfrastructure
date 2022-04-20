@@ -85,7 +85,7 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
         }
         {
           name: 'CLEARBIT_API_KEY'
-          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/CLEARBIT_API_KEY)'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/CLEARBITAPIKEY)'
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'

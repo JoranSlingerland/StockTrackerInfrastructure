@@ -94,7 +94,7 @@ resource kvApi_key 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
 
 resource kvClearbit_api_key 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   parent: kv
-  name: 'CLEARBIT_API_KEY'
+  name: 'CLEARBITAPIKEY'
   properties: {
     contentType: 'text/plain'
     value: CLEARBIT_API_KEY
