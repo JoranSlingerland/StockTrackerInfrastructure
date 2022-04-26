@@ -14,6 +14,8 @@ param user string
 param password string
 @secure()
 param apiKey string
+@secure()
+param CLEARBIT_API_KEY string
 
 //resources
 resource kv 'Microsoft.KeyVault/vaults@2021-10-01' = {
@@ -87,5 +89,14 @@ resource kvApi_key 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   properties: {
     contentType: 'text/plain'
     value: apiKey
+  }
+}
+
+resource kvClearbit_api_key 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
+  parent: kv
+  name: 'CLEARBITAPIKEY'
+  properties: {
+    contentType: 'text/plain'
+    value: CLEARBIT_API_KEY
   }
 }

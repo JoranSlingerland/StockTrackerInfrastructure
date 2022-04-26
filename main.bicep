@@ -42,6 +42,8 @@ param server string
 param database string
 @secure()
 param apiKey string
+@secure()
+param CLEARBIT_API_KEY string
 
 //Paramters Function
 var functionRg = resourceGroup(resourceGroupNames[2].name)
@@ -132,6 +134,7 @@ module kv 'Modules/Management/kv.bicep' = {
     database: database
     password: localAdminPassword
     user: localAdminUsername
+    CLEARBIT_API_KEY: CLEARBIT_API_KEY
     kvName: kvName.outputs.kvNameOutput
     functionId: function.outputs.functionId
   }
