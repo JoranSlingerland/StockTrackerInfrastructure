@@ -47,7 +47,7 @@ resource kv 'Microsoft.KeyVault/vaults@2021-10-01' = {
 
 resource kvServer 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   parent: kv
-  name: 'COSMOSDB_ENDPOINT'
+  name: 'COSMOSDBENDPOINT'
   properties: {
     contentType: 'text/plain'
     value: COSMOSDB_ENDPOINT
@@ -56,7 +56,7 @@ resource kvServer 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
 
 resource kvDatabase 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   parent: kv
-  name: 'COSMOSDB_DATABASE'
+  name: 'COSMOSDBDATABASE'
   properties: {
     contentType: 'text/plain'
     value: COSMOSDB_DATABASE
@@ -65,7 +65,7 @@ resource kvDatabase 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
 
 resource kvUser 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   parent: kv
-  name: 'COSMOSDB_OFFER_THROUGHPUT'
+  name: 'COSMOSDBOFFERTHROUGHPUT'
   properties: {
     contentType: 'text/plain'
     value: COSMOSDB_OFFER_THROUGHPUT
@@ -74,7 +74,7 @@ resource kvUser 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
 
 resource kvPassword 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   parent: kv
-  name: 'COSMOSDB_KEY'
+  name: 'COSMOSDBKEY'
   properties: {
     contentType: 'text/plain'
     value: COSMOSDB_KEY

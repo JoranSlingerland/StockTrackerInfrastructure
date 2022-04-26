@@ -65,19 +65,19 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
         }
         {
           name: 'COSMOSDB_ENDPOINT'
-          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDB_ENDPOINT)'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDBENDPOINT)'
         }
         {
           name: 'COSMOSDB_DATABASE'
-          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDB_DATABASE)'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDBDATABASE)'
         }
         {
           name: 'COSMOSDB_KEY'
-          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDB_KEY)'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDBKEY)'
         }
         {
           name: 'COSMOSDB_OFFER_THROUGHPUT'
-          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDB_OFFER_THROUGHPUT)'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDBOFFERTHROUGHPUT)'
         }
         {
           name: 'API_KEY'
