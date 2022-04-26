@@ -29,7 +29,7 @@ param tags object = {
 var kvRg = resourceGroup(resourceGroupNames[0].name)
 param kvNamePrefix string = 'kv-'
 
-param cosmosdbLocation string = 'centralus'
+param cosmosdbLocation string = 'westus'
 param COSMOSDB_DATABASE string = 'stocktracker'
 param COSMOSDB_OFFER_THROUGHPUT string = '1000'
 @secure()
