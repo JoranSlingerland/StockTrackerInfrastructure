@@ -74,7 +74,7 @@ module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = {
   }
 }
 
-module kvName 'Modules/Management/namegeneration.bicep' = {
+module kvName 'Modules/Management/nameGeneration.bicep' = {
   name: 'kvName'
   scope: kvRg
   params: {
@@ -82,7 +82,7 @@ module kvName 'Modules/Management/namegeneration.bicep' = {
   }
 }
 
-module cosmosdbName 'Modules/Management/namegeneration.bicep' = {
+module cosmosdbName 'Modules/Management/nameGeneration.bicep' = {
   name: 'cosmosdbName'
   scope: cosmosdbRg
   params: {
