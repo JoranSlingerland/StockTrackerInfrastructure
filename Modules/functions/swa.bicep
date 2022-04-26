@@ -1,3 +1,4 @@
+//parameters
 param swaNamePrefix string
 param location string
 param gitRepo string
@@ -5,8 +6,10 @@ param tags object
 @secure()
 param repositoryToken string
 
+//variables
 var swaName = '${swaNamePrefix}${uniqueString(resourceGroup().id)}'
 
+//resources
 resource swa 'Microsoft.Web/staticSites@2021-03-01' = {
   name: swaName
   location: location
