@@ -3,11 +3,11 @@ targetScope = 'subscription'
 param location string = 'westeurope'
 param resourceGroupNames array = [
   {
-    name:'rg-mgmt-prod-westeu-001'
+    name: 'rg-mgmt-prod-westeu-001'
     lockResourceGroup: false
   }
   {
-    name:'rg-sql-prod-westeu-001'
+    name: 'rg-sql-prod-westeu-001'
     lockResourceGroup: false
   }
   {
@@ -25,21 +25,13 @@ param tags object = {
   'deployment_type': 'Bicep'
 }
 
-//parameters sql server
-var sqlServerRg = resourceGroup(resourceGroupNames[1].name)
-param sqlServerName string = 'sql-stocktracker-prod-westeu-001'
-param localAdminUsername string = 'azadmin'
-@secure()
-param localAdminPassword string
-
 //paramters keyvault
 var kvRg = resourceGroup(resourceGroupNames[0].name)
 param kvNamePrefix string = 'kv-'
 
-@secure()
-param server string
-@secure()
-param database string
+param cosmosdbLocation string = 'centralus'
+param COSMOSDB_DATABASE string = 'stocktracker'
+param COSMOSDB_OFFER_THROUGHPUT string = '1000'
 @secure()
 param apiKey string
 @secure()
@@ -50,15 +42,6 @@ var functionRg = resourceGroup(resourceGroupNames[2].name)
 var appServicePlanNamePrefix = 'plan-'
 var functionNamePrefix = 'func-'
 var stNamePrefix = 'st'
-
-//parameters database
-var sqlDatabaseRg = resourceGroup(resourceGroupNames[1].name)
-param sqlDatabases array = [
-  {
-    name: 'sqldb-stocktracker-prod-westeu-001'
-    dtu: 10
-  }
-]
 
 //Log analytics parameters
 var logAnalyticsRg = resourceGroup(resourceGroupNames[0].name)
@@ -76,50 +59,34 @@ param swaGitRepo string = 'https://github.com/JoranSlingerland/Stocktracker-Fron
 @secure()
 param repositoryToken string
 
+//cosmos db parameters
+var cosmosdbRg = resourceGroup(resourceGroupNames[1].name)
+param cosmosdbNamePrefix string = 'cosmosdb-'
+param cosmosdbFreeTierOffer bool = true
+param cosmosdbTotalThroughputLimit int = 1000
+
 module resourceGroupsDeployment './Modules/Management/resourcegroups.bicep' = {
   name: 'resourceGroupDeployment'
   params: {
     location: location
     resourceGroupNames: resourceGroupNames
     tags: tags
-  } 
-}
-
-module sqlServer './Modules/SQL/sqlserver.bicep' = {
-  name: 'sqlServer'
-  scope: sqlServerRg
-  params: {
-    tags: tags
-    location: location
-    administratorLogin: localAdminUsername
-    administratorLoginPassword: localAdminPassword
-    serverName: sqlServerName
   }
-  dependsOn: [
-    resourceGroupsDeployment
-  ]
 }
 
-module sqlDatabase './Modules/SQL/sqldatabase.bicep' = {
-  name: 'sqlDatabase'
-  scope: sqlDatabaseRg
-  params: {
-    tags: tags
-    location: location
-    sqlServerName: sqlServerName
-    sqlDatabases: sqlDatabases
-  }
-  dependsOn: [
-    sqlServer
-    resourceGroupsDeployment
-  ]
-}
-
-module kvName 'Modules/Management/kvName.bicep' = {
+module kvName 'Modules/Management/namegeneration.bicep' = {
   name: 'kvName'
   scope: kvRg
   params: {
-    kvNamePrefix: kvNamePrefix
+    namePrefix: kvNamePrefix
+  }
+}
+
+module cosmosdbName 'Modules/Management/namegeneration.bicep' = {
+  name: 'cosmosdbName'
+  scope: cosmosdbRg
+  params: {
+    namePrefix: cosmosdbNamePrefix
   }
 }
 
@@ -130,18 +97,19 @@ module kv 'Modules/Management/kv.bicep' = {
     tags: tags
     location: location
     apiKey: apiKey
-    server: server
-    database: database
-    password: localAdminPassword
-    user: localAdminUsername
+    COSMOSDB_ENDPOINT: cosmos.outputs.COSMOSDB_ENDPOINT
+    COSMOSDB_DATABASE: COSMOSDB_DATABASE
+    COSMOSDB_OFFER_THROUGHPUT: COSMOSDB_OFFER_THROUGHPUT
+    COSMOSDB_KEY: cosmos.outputs.COSMOSDB_KEY
     CLEARBIT_API_KEY: CLEARBIT_API_KEY
-    kvName: kvName.outputs.kvNameOutput
+    kvName: kvName.outputs.nameOutput
     functionId: function.outputs.functionId
   }
   dependsOn: [
     resourceGroupsDeployment
     kvName
     function
+    cosmos
   ]
 }
 
@@ -154,13 +122,14 @@ module function 'Modules/functions/function.bicep' = {
     stNamePrefix: stNamePrefix
     appServicePlanNamePrefix: appServicePlanNamePrefix
     functionNamePrefix: functionNamePrefix
-    kvName: kvName.outputs.kvNameOutput
+    kvName: kvName.outputs.nameOutput
     appInsightsInstrumentationKey: ai.outputs.appInsightsInstrumentationKey
   }
   dependsOn: [
     resourceGroupsDeployment
     kvName
     ai
+    cosmos
   ]
 }
 
@@ -205,5 +174,21 @@ module swa 'Modules/functions/swa.bicep' = {
   }
   dependsOn: [
     resourceGroupsDeployment
+  ]
+}
+
+module cosmos 'Modules/cosmosdb.bicep' = {
+  name: 'cosmos'
+  scope: cosmosdbRg
+  params: {
+    tags: tags
+    location: cosmosdbLocation
+    cosmosdbFreeTierOffer: cosmosdbFreeTierOffer
+    cosmosdbName: cosmosdbName.outputs.nameOutput
+    totalThroughputLimit: cosmosdbTotalThroughputLimit
+  }
+  dependsOn: [
+    resourceGroupsDeployment
+    cosmosdbName
   ]
 }

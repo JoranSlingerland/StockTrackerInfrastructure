@@ -1,5 +1,5 @@
 //parameters
-param cosmosdbNamePrefix string
+param cosmosdbName string
 param location string
 param tags object
 param cosmosdbFreeTierOffer bool
@@ -13,7 +13,6 @@ var locations = [
     isZoneRedundant: false
   }
 ]
-var cosmosdbName = '${cosmosdbNamePrefix}${uniqueString(resourceGroup().id)}'
 
 //resources
 resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2021-11-15-preview' = {
@@ -45,3 +44,9 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2021-11-15-preview' = {
     }
   }
 }
+
+var COSMOSDB_ENDPOINT = listKeys(cosmosdb.id, cosmosdb.apiVersion).documentEndpoint
+var COSMOSDB_KEY = listKeys(cosmosdb.id, cosmosdb.apiVersion).primaryMasterKey
+
+output COSMOSDB_ENDPOINT string = COSMOSDB_ENDPOINT
+output COSMOSDB_KEY string = COSMOSDB_KEY

@@ -27,4 +27,4 @@ jobs:
           region: westeurope
           template: ./main.bicep
           deploymentname: Stocktracker
-          parameters: localAdminPassword=${{ secrets.SQLPASSWORD }} server=${{ secrets.SERVER}} database=${{ secrets.DATABASE}} apiKey=${{ secrets.APIKEY}} repositoryToken=${{ secrets.SWA_REPO_TOKEN }} CLEARBIT_API_KEY=${{ secrets.CLEARBIT_API_KEY }}
+          parameters: apiKey=${{ secrets.APIKEY}} repositoryToken=${{ secrets.SWA_REPO_TOKEN }} CLEARBIT_API_KEY=${{ secrets.CLEARBIT_API_KEY }}

@@ -64,20 +64,20 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
         }
         {
-          name: 'SERVER'
-          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/server)'
+          name: 'COSMOSDB_ENDPOINT'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDB_ENDPOINT)'
         }
         {
-          name: 'DATABASE'
-          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/database)'
+          name: 'COSMOSDB_DATABASE'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDB_DATABASE)'
         }
         {
-          name: 'USER'
-          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/user)'
+          name: 'COSMOSDB_KEY'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDB_KEY)'
         }
         {
-          name: 'PASSWORD'
-          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/password)'
+          name: 'COSMOSDB_OFFER_THROUGHPUT'
+          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDB_OFFER_THROUGHPUT)'
         }
         {
           name: 'API_KEY'

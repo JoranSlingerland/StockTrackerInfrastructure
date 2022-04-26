@@ -5,13 +5,11 @@ param tags object
 param functionId string
 
 @secure()
-param server string
+param COSMOSDB_ENDPOINT string
+param COSMOSDB_DATABASE string
+param COSMOSDB_OFFER_THROUGHPUT string
 @secure()
-param database string
-@secure()
-param user string
-@secure()
-param password string
+param COSMOSDB_KEY string
 @secure()
 param apiKey string
 @secure()
@@ -49,37 +47,37 @@ resource kv 'Microsoft.KeyVault/vaults@2021-10-01' = {
 
 resource kvServer 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   parent: kv
-  name: 'server'
+  name: 'COSMOSDB_ENDPOINT'
   properties: {
     contentType: 'text/plain'
-    value: server
+    value: COSMOSDB_ENDPOINT
   }
 }
 
 resource kvDatabase 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   parent: kv
-  name: 'database'
+  name: 'COSMOSDB_DATABASE'
   properties: {
     contentType: 'text/plain'
-    value: database
+    value: COSMOSDB_DATABASE
   }
 }
 
 resource kvUser 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   parent: kv
-  name: 'user'
+  name: 'COSMOSDB_OFFER_THROUGHPUT'
   properties: {
     contentType: 'text/plain'
-    value: user
+    value: COSMOSDB_OFFER_THROUGHPUT
   }
 }
 
 resource kvPassword 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   parent: kv
-  name: 'password'
+  name: 'COSMOSDB_KEY'
   properties: {
     contentType: 'text/plain'
-    value: password
+    value: COSMOSDB_KEY
   }
 }
 
