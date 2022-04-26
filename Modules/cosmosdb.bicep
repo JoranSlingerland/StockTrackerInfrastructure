@@ -45,7 +45,7 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2021-11-15-preview' = {
   }
 }
 
-var COSMOSDB_ENDPOINT = listKeys(cosmosdb.id, cosmosdb.apiVersion).documentEndpoint
+var COSMOSDB_ENDPOINT = 'https://${cosmosdbName}.documents.azure.com:443'
 var COSMOSDB_KEY = listKeys(cosmosdb.id, cosmosdb.apiVersion).primaryMasterKey
 
 output COSMOSDB_ENDPOINT string = COSMOSDB_ENDPOINT
