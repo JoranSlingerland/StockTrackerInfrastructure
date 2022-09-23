@@ -4,6 +4,7 @@ on:
       - "build"
     branches:
       - "main"
+  workflow_dispatch:
 
 name: Deploy to Azure
 jobs:
