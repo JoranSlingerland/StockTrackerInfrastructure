@@ -29,7 +29,6 @@ param tags object = {
 var kvRg = resourceGroup(resourceGroupNames[0].name)
 param kvNamePrefix string = 'kv-'
 
-param cosmosdbLocation string = 'westus'
 param COSMOSDB_DATABASE string = 'stocktracker'
 param COSMOSDB_OFFER_THROUGHPUT string = '1000'
 @secure()
@@ -182,7 +181,7 @@ module cosmos 'Modules/cosmosdb.bicep' = {
   scope: cosmosdbRg
   params: {
     tags: tags
-    location: cosmosdbLocation
+    location: location
     cosmosdbFreeTierOffer: cosmosdbFreeTierOffer
     cosmosdbName: cosmosdbName.outputs.nameOutput
     totalThroughputLimit: cosmosdbTotalThroughputLimit
