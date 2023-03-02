@@ -19,10 +19,10 @@ param resourceGroupNames array = [
 //tags
 param basetime string = utcNow('u')
 param tags object = {
-  'env': 'prod'
-  'utcdatedeployed': basetime
-  'project': 'Stocktracker'
-  'deployment_type': 'Bicep'
+  env: 'prod'
+  utcdatedeployed: basetime
+  project: 'Stocktracker'
+  deployment_type: 'Bicep'
 }
 
 //paramters keyvault
