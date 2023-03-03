@@ -52,7 +52,7 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
           value: 'python'
         }
         {
-          "functionTimeout": "00:10:00"
+          'functionTimeout': '00:10:00'
         }
         {
           name: 'ENABLE_ORYX_BUILD'
