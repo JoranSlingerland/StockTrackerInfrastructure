@@ -11,6 +11,11 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      #get utc timestamp
+      - name: Get UTC timestamp
+        id: timestamp
+        run: echo "::set-output name=utc::$(date -u +%Y%m%d%H%M%S)"
+
       # Checkout code
       - uses: actions/checkout@main
 
@@ -27,5 +32,5 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
           region: westeurope
           template: ./main.bicep
-          deploymentname: Stocktracker.$(date -u +"%Y%m%d%H%M%S")
+          deploymentname: Stocktracker.${{ steps.timestamp.outputs.utc }}
           parameters: apiKey=${{ secrets.APIKEY}} repositoryToken=${{ secrets.SWA_REPO_TOKEN }} CLEARBIT_API_KEY=${{ secrets.CLEARBIT_API_KEY }}
