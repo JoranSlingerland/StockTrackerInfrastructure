@@ -27,5 +27,5 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
           region: westeurope
           template: ./main.bicep
-          deploymentname: Stocktracker
+          deploymentname: Stocktracker.$(date -u +"%Y%m%d%H%M%S")
           parameters: apiKey=${{ secrets.APIKEY}} repositoryToken=${{ secrets.SWA_REPO_TOKEN }} CLEARBIT_API_KEY=${{ secrets.CLEARBIT_API_KEY }}
