@@ -170,6 +170,7 @@ module swa 'Modules/functions/swa.bicep' = {
     swaNamePrefix: swaNamePrefix
     gitRepo: swaGitRepo
     repositoryToken: repositoryToken
+    backendResourceId: function.outputs.functionId
   }
   dependsOn: [
     resourceGroupsDeployment

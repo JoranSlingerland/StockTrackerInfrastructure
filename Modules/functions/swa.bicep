@@ -5,6 +5,7 @@ param gitRepo string
 param tags object
 @secure()
 param repositoryToken string
+param backendResourceId string
 
 //variables
 var swaName = '${swaNamePrefix}${uniqueString(resourceGroup().id)}'
@@ -14,8 +15,8 @@ resource swa 'Microsoft.Web/staticSites@2021-03-01' = {
   name: swaName
   location: location
   sku: {
-    name: 'Free'
-    tier: 'Free'
+    name: 'Standard'
+    tier: 'Standard'
   }
   properties: {
     repositoryUrl: gitRepo
@@ -31,4 +32,13 @@ resource swa 'Microsoft.Web/staticSites@2021-03-01' = {
     }
   }
   tags: tags
+}
+
+resource backend 'Microsoft.Web/staticSites/linkedBackends@2022-03-01' = {
+  name: 'api'
+  parent: swa
+  properties: {
+    backendResourceId: backendResourceId
+    region: location
+  }
 }
