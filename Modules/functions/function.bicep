@@ -97,7 +97,7 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
         }
       ]
       numberOfWorkers: 1
-      linuxFxVersion: 'Python|3.9'
+      linuxFxVersion: 'Python|3.10'
       acrUseManagedIdentityCreds: false
       alwaysOn: false
       http20Enabled: false
@@ -147,8 +147,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   location: location
   tags: tags
-  properties: {
-  }
+  properties: {}
   sku: {
     name: accountType
   }
