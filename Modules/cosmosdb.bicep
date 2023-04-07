@@ -32,12 +32,7 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2021-11-15-preview' = {
     databaseAccountOfferType: 'Standard'
     locations: locations
     backupPolicy: {
-      type: 'Periodic'
-      periodicModeProperties: {
-        backupIntervalInMinutes: 240
-        backupRetentionIntervalInHours: 8
-        backupStorageRedundancy: 'Geo'
-      }
+      type: 'Continuous'
     }
     capacity: {
       totalThroughputLimit: totalThroughputLimit
