@@ -31,10 +31,6 @@ param kvNamePrefix string = 'kv-'
 
 param COSMOSDB_DATABASE string = 'stocktracker'
 param COSMOSDB_OFFER_THROUGHPUT string = '1000'
-@secure()
-param apiKey string
-@secure()
-param CLEARBIT_API_KEY string
 
 //Paramters Function
 var functionRg = resourceGroup(resourceGroupNames[2].name)
@@ -95,12 +91,10 @@ module kv 'Modules/Management/kv.bicep' = {
   params: {
     tags: tags
     location: location
-    apiKey: apiKey
     COSMOSDB_ENDPOINT: cosmos.outputs.COSMOSDB_ENDPOINT
     COSMOSDB_DATABASE: COSMOSDB_DATABASE
     COSMOSDB_OFFER_THROUGHPUT: COSMOSDB_OFFER_THROUGHPUT
     COSMOSDB_KEY: cosmos.outputs.COSMOSDB_KEY
-    CLEARBIT_API_KEY: CLEARBIT_API_KEY
     kvName: kvName.outputs.nameOutput
     functionId: function.outputs.functionId
   }

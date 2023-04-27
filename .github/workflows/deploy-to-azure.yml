@@ -33,4 +33,4 @@ jobs:
           region: westeurope
           template: ./main.bicep
           deploymentname: Stocktracker.${{ steps.timestamp.outputs.utc }}
-          parameters: apiKey=${{ secrets.APIKEY}} repositoryToken=${{ secrets.SWA_REPO_TOKEN }} CLEARBIT_API_KEY=${{ secrets.CLEARBIT_API_KEY }}
+          parameters: repositoryToken=${{ secrets.SWA_REPO_TOKEN }}
