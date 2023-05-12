@@ -15,7 +15,7 @@ var locations = [
 ]
 
 //resources
-resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2022-11-15' = {
+resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
   name: cosmosdbName
   location: location
   kind: 'GlobalDocumentDB'
