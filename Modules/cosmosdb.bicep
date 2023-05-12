@@ -33,6 +33,9 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
     locations: locations
     backupPolicy: {
       type: 'Continuous'
+      continuousModeProperties: {
+        tier: 'Continuous7Days'
+      }
     }
     capacity: {
       totalThroughputLimit: totalThroughputLimit
