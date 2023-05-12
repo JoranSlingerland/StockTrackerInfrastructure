@@ -15,13 +15,13 @@ var locations = [
 ]
 
 //resources
-resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2021-11-15-preview' = {
+resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2022-11-15' = {
   name: cosmosdbName
   location: location
   kind: 'GlobalDocumentDB'
   tags: tags
   properties: {
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: 'enabled'
     enableAutomaticFailover: false
     enableMultipleWriteLocations: false
     enableFreeTier: cosmosdbFreeTierOffer
@@ -38,6 +38,8 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2021-11-15-preview' = {
       totalThroughputLimit: totalThroughputLimit
     }
     networkAclBypass: 'AzureServices'
+    minimalTlsVersion: 'Tls12'
+    ipRules: []
   }
 }
 
