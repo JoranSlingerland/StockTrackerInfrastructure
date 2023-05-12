@@ -21,7 +21,7 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2022-11-15' = {
   kind: 'GlobalDocumentDB'
   tags: tags
   properties: {
-    publicNetworkAccess: 'enabled'
+    publicNetworkAccess: 'SecuredByPerimeter'
     enableAutomaticFailover: false
     enableMultipleWriteLocations: false
     enableFreeTier: cosmosdbFreeTierOffer
