@@ -21,7 +21,7 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2021-11-15-preview' = {
   kind: 'GlobalDocumentDB'
   tags: tags
   properties: {
-    publicNetworkAccess: 'Enabled'
+    publicNetworkAccess: 'Disabled'
     enableAutomaticFailover: false
     enableMultipleWriteLocations: false
     enableFreeTier: cosmosdbFreeTierOffer
@@ -37,6 +37,7 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2021-11-15-preview' = {
     capacity: {
       totalThroughputLimit: totalThroughputLimit
     }
+    networkAclBypass: 'AzureServices'
   }
 }
 
