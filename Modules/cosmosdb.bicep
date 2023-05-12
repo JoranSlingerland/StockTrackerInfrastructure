@@ -21,7 +21,7 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
   kind: 'GlobalDocumentDB'
   tags: tags
   properties: {
-    publicNetworkAccess: 'SecuredByPerimeter'
+    publicNetworkAccess: 'Enabled'
     enableAutomaticFailover: false
     enableMultipleWriteLocations: false
     enableFreeTier: cosmosdbFreeTierOffer
@@ -39,7 +39,9 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
     }
     networkAclBypass: 'AzureServices'
     minimalTlsVersion: 'Tls12'
-    ipRules: []
+    ipRules: [ {
+        ipAddressOrRange: '0.0.0.0'
+      } ]
   }
 }
 
