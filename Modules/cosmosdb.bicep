@@ -86,9 +86,6 @@ resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-04-15
     }
     options: {
       throughput: totalThroughputLimit
-      autoscaleSettings: {
-        maxThroughput: totalThroughputLimit
-      }
     }
   }
 }
