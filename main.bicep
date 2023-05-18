@@ -180,6 +180,7 @@ module cosmos 'Modules/cosmosdb.bicep' = {
     cosmosdbFreeTierOffer: cosmosdbFreeTierOffer
     cosmosdbName: cosmosdbName.outputs.nameOutput
     totalThroughputLimit: cosmosdbTotalThroughputLimit
+    COSMOSDB_DATABASE: COSMOSDB_DATABASE
   }
   dependsOn: [
     resourceGroupsDeployment
