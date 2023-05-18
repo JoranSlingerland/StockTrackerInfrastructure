@@ -84,19 +84,11 @@ resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-04-15
     resource: {
       id: COSMOSDB_DATABASE
     }
-  }
-}
-
-resource databaseThroughput 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings@2023-04-15' = {
-  name: 'default'
-  location: location
-  parent: database
-  properties: {
-    resource: {
+    options: {
+      throughput: totalThroughputLimit
       autoscaleSettings: {
         maxThroughput: totalThroughputLimit
       }
-      throughput: totalThroughputLimit
     }
   }
 }
@@ -135,9 +127,6 @@ resource dbContainers 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/contai
       }
     }
   }
-  dependsOn: [
-    databaseThroughput
-  ]
 }]
 
 var COSMOSDB_ENDPOINT = 'https://${cosmosdbName}.documents.azure.com:443'
