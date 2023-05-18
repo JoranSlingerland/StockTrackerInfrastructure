@@ -87,6 +87,20 @@ resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-04-15
   }
 }
 
+resource databaseThroughput 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/throughputSettings@2023-04-15' = {
+  name: COSMOSDB_DATABASE
+  location: location
+  parent: database
+  properties: {
+    resource: {
+      autoscaleSettings: {
+        maxThroughput: totalThroughputLimit
+      }
+      throughput: totalThroughputLimit
+    }
+  }
+}
+
 resource dbContainers 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2023-04-15' = [for container in containers: {
   name: container.name
   location: location
