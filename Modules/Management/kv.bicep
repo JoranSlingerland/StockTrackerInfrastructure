@@ -7,7 +7,6 @@ param functionId string
 @secure()
 param COSMOSDB_ENDPOINT string
 param COSMOSDB_DATABASE string
-param COSMOSDB_OFFER_THROUGHPUT string
 @secure()
 param COSMOSDB_KEY string
 
@@ -56,15 +55,6 @@ resource kvDatabase 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
   properties: {
     contentType: 'text/plain'
     value: COSMOSDB_DATABASE
-  }
-}
-
-resource kvUser 'Microsoft.KeyVault/vaults/secrets@2021-10-01' = {
-  parent: kv
-  name: 'COSMOSDBOFFERTHROUGHPUT'
-  properties: {
-    contentType: 'text/plain'
-    value: COSMOSDB_OFFER_THROUGHPUT
   }
 }
 

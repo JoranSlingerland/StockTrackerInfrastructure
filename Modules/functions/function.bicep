@@ -80,10 +80,6 @@ resource functionSite 'Microsoft.Web/sites@2021-03-01' = {
           value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDBKEY)'
         }
         {
-          name: 'COSMOSDB_OFFER_THROUGHPUT'
-          value: '@Microsoft.KeyVault(SecretUri=https://${kvName}.vault.azure.net/secrets/COSMOSDBOFFERTHROUGHPUT)'
-        }
-        {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
           value: appInsightsInstrumentationKey
         }
